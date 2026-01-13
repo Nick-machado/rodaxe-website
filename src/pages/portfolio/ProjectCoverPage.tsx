@@ -51,7 +51,7 @@ const ProjectCoverPage = () => {
         />
         
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-0 bg-black/80" />
 
         {/* Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-8">
