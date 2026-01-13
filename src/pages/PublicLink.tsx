@@ -84,9 +84,9 @@ const PublicLink = () => {
       <div className="min-h-screen bg-background flex flex-col">
         {/* Header */}
         <header className="border-b border-border bg-card">
-          <div className="container mx-auto px-4 py-4 flex justify-center">
-            <img src={logoDark} alt="Rodaxe" className="h-8 dark:hidden" />
-            <img src={logoLight} alt="Rodaxe" className="h-8 hidden dark:block" />
+          <div className="container mx-auto px-4 py-4 flex justify-center h-14 md:h-16 overflow-hidden items-center">
+            <img src={logoDark} alt="Rodaxe" className="h-36 md:h-44 w-auto object-cover object-center -my-10 dark:hidden" />
+            <img src={logoLight} alt="Rodaxe" className="h-36 md:h-44 w-auto object-cover object-center -my-10 hidden dark:block" />
           </div>
         </header>
 
