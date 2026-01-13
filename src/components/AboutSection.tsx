@@ -17,11 +17,11 @@ const AboutSection = () => {
       </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-4xl mx-auto text-center">
           {/* Content */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
@@ -31,17 +31,17 @@ const AboutSection = () => {
             <h2 className="font-display text-4xl md:text-5xl font-light text-foreground mb-6 leading-tight">
               Criamos <span className="text-primary font-medium">experiências</span> visuais memoráveis
             </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+            <p className="text-muted-foreground text-lg leading-relaxed mb-6 max-w-2xl mx-auto">
               Somos especialistas em captação aérea e produção audiovisual para o mercado imobiliário. 
               Nossa missão é transformar propriedades em experiências visuais que conectam e inspiram.
             </p>
-            <p className="text-muted-foreground leading-relaxed mb-8">
+            <p className="text-muted-foreground leading-relaxed mb-12 max-w-2xl mx-auto">
               Com equipamentos de última geração e uma equipe apaixonada por contar histórias, 
               entregamos conteúdo que valoriza cada detalhe dos seus empreendimentos.
             </p>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
                 <motion.div
                   key={stat.label}
@@ -51,61 +51,15 @@ const AboutSection = () => {
                   viewport={{ once: true }}
                   className="text-center"
                 >
-                  <stat.icon size={24} className="text-primary mx-auto mb-2" />
-                  <p className="font-display text-2xl md:text-3xl font-bold text-foreground">
+                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                    <stat.icon size={24} className="text-primary" />
+                  </div>
+                  <p className="font-display text-3xl md:text-4xl font-bold text-foreground">
                     {stat.value}
                   </p>
-                  <p className="text-muted-foreground text-sm">{stat.label}</p>
+                  <p className="text-muted-foreground text-sm mt-1">{stat.label}</p>
                 </motion.div>
               ))}
-            </div>
-          </motion.div>
-
-          {/* Decorative Element / Team placeholder */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="relative"
-          >
-            <div className="relative">
-              {/* Main decorative card */}
-              <div className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-border/50 flex items-center justify-center overflow-hidden">
-                {/* Placeholder pattern */}
-                <div className="absolute inset-0 opacity-30">
-                  <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    {[...Array(10)].map((_, i) => (
-                      <line
-                        key={i}
-                        x1="0"
-                        y1={i * 10}
-                        x2="100"
-                        y2={i * 10}
-                        stroke="currentColor"
-                        strokeWidth="0.2"
-                        className="text-foreground/20"
-                      />
-                    ))}
-                  </svg>
-                </div>
-                
-                <div className="text-center p-8">
-                  <p className="font-display text-6xl md:text-7xl italic text-foreground/10 mb-4">
-                    Founders
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    Conheça nossa equipe
-                  </p>
-                </div>
-              </div>
-
-              {/* Floating accent */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-primary/20 blur-2xl"
-              />
             </div>
           </motion.div>
         </div>
