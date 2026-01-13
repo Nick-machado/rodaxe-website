@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { Niche } from "@/lib/mockData";
+
+interface Niche {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  featured_image_url?: string | null;
+  video_count?: number;
+}
 
 interface NicheCardProps {
   niche: Niche;
