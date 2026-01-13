@@ -57,7 +57,9 @@ npm install @supabase/supabase-js
 
 ---
 
-## 📊 Schema do Banco de Dados (A Criar no Sistema Admin)
+## 📊 Schema do Banco de Dados (JÁ CONFIGURADO)
+
+> ✅ **NOTA:** As tabelas abaixo já foram criadas no banco de dados do site principal. O sistema admin pode conectar e usar imediatamente.
 
 ### Tabela: `portfolio_projects`
 
