@@ -54,6 +54,10 @@ const ServicesSection = () => {
 
     const cards = gsap.utils.toArray<HTMLElement>(".service-card");
     const totalCards = cards.length;
+    const totalTransitions = totalCards - 1; // 4 transitions for 5 cards
+
+    // Each transition gets 25% of scroll (100% / 4 = 25%)
+    const transitionPercent = 100 / totalTransitions;
 
     // Create context for cleanup
     const ctx = gsap.context(() => {
@@ -71,65 +75,64 @@ const ServicesSection = () => {
         });
       }
 
-      // Set initial z-index (first card on top)
+      // Set initial states
       cards.forEach((card, i) => {
+        // First card on top with highest z-index
         gsap.set(card, {
           zIndex: totalCards - i,
         });
-      });
 
-      // Create timeline for each card
-      cards.forEach((card, i) => {
-        // Only animate cards that are not the last one (they exit)
-        if (i < totalCards - 1) {
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: section,
-              start: () => `top+=${(i * 100) / (totalCards - 1)}% top`,
-              end: () => `top+=${((i + 1) * 100) / (totalCards - 1)}% top`,
-              scrub: 1,
-              invalidateOnRefresh: true,
-            },
-          });
-
-          // Card exits by moving up and fading out
-          tl.to(card, {
-            yPercent: -120,
-            opacity: 0,
-            scale: 0.9,
-            rotateX: 10,
-            duration: 1,
-            ease: "power2.inOut",
+        // Cards behind the first one start scaled down and offset
+        if (i > 0) {
+          gsap.set(card, {
+            scale: 0.85 - (i - 1) * 0.02,
+            yPercent: 6 + (i - 1) * 3,
+            rotateX: -6,
+            opacity: 1,
           });
         }
       });
 
-      // Animate cards coming from behind (scale up as previous card exits)
+      // Create sequential animations for each transition
       cards.forEach((card, i) => {
-        if (i > 0) {
-          // Set initial state for cards behind
-          gsap.set(card, {
-            scale: 0.85 - (i - 1) * 0.03,
-            yPercent: 8 + (i - 1) * 4,
-            rotateX: -8,
-          });
-
-          const tl = gsap.timeline({
+        // Calculate the start of this card's transition phase
+        const phaseStart = i * transitionPercent;
+        
+        // EXIT animation: Card i exits (first 60% of its phase)
+        if (i < totalTransitions) {
+          gsap.timeline({
             scrollTrigger: {
               trigger: section,
-              start: () => `top+=${((i - 1) * 100) / (totalCards - 1)}% top`,
-              end: () => `top+=${(i * 100) / (totalCards - 1)}% top`,
-              scrub: 1,
+              start: `top+=${phaseStart}% top`,
+              end: `top+=${phaseStart + transitionPercent * 0.6}% top`,
+              scrub: 0.5,
               invalidateOnRefresh: true,
             },
+          }).to(card, {
+            yPercent: -120,
+            opacity: 0,
+            scale: 0.9,
+            rotateX: 8,
+            ease: "power2.in",
           });
+        }
 
-          // Card comes to front
-          tl.to(card, {
+        // ENTRY animation: Card i comes to front (last 60% of PREVIOUS phase)
+        if (i > 0) {
+          const prevPhaseStart = (i - 1) * transitionPercent;
+          
+          gsap.timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: `top+=${prevPhaseStart + transitionPercent * 0.4}% top`,
+              end: `top+=${prevPhaseStart + transitionPercent}% top`,
+              scrub: 0.5,
+              invalidateOnRefresh: true,
+            },
+          }).to(card, {
             scale: 1,
             yPercent: 0,
             rotateX: 0,
-            duration: 1,
             ease: "power2.out",
           });
         }
@@ -143,8 +146,7 @@ const ServicesSection = () => {
     <section
       ref={sectionRef}
       id="services"
-      className="relative bg-background"
-      style={{ height: "400vh" }}
+      style={{ height: "500vh" }}
     >
       {/* Background parallax text */}
       <div
