@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Search, Globe, Phone, Mail, Facebook, Instagram, Youtube } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
 import logoLight from "@/assets/logo-rodaxe-light.png";
@@ -23,19 +21,9 @@ const PortfolioPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 18;
 
-  const { data: projects = [], isLoading } = useQuery({
-    queryKey: ["portfolio-projects"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("portfolio_projects")
-        .select("*")
-        .eq("is_published", true)
-        .order("project_date", { ascending: false });
-
-      if (error) throw error;
-      return data as PortfolioProject[];
-    },
-  });
+  // Placeholder - será populado quando as tabelas forem criadas pelo sistema admin
+  const projects: PortfolioProject[] = [];
+  const isLoading = false;
 
   const filteredProjects = projects.filter((project) =>
     project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -145,7 +133,10 @@ const PortfolioPage = () => {
               </div>
             ) : paginatedProjects.length === 0 ? (
               <div className="text-center py-16">
-                <p className="text-muted-foreground">Nenhum projeto encontrado.</p>
+                <p className="text-muted-foreground mb-4">Nenhum projeto encontrado.</p>
+                <p className="text-sm text-muted-foreground/60">
+                  Os projetos serão adicionados através do sistema administrativo.
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

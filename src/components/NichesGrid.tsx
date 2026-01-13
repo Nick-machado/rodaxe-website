@@ -1,23 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
-import NicheCard from "./NicheCard";
+import { Link } from "react-router-dom";
 
 const NichesGrid = () => {
-  const { data: niches = [], isLoading } = useQuery({
-    queryKey: ["public-niches"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("niches")
-        .select(`
-          *,
-          video_niches(count)
-        `)
-        .order("name");
-      if (error) throw error;
-      return data;
-    },
-  });
+  // Placeholder - será populado pelo sistema admin externo via banco de dados
+  const niches: any[] = [];
 
   return (
     <section id="niches" className="py-32 bg-card/30">
@@ -42,47 +28,24 @@ const NichesGrid = () => {
           </p>
         </motion.div>
 
-        {/* Grid */}
-        {isLoading ? (
-          <div className="text-center py-12 text-muted-foreground">
-            <motion.div
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              Carregando...
-            </motion.div>
-          </div>
-        ) : niches.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {niches.map((niche: any, index: number) => (
-              <NicheCard
-                key={niche.id}
-                niche={{
-                  id: niche.id,
-                  name: niche.name,
-                  slug: niche.slug,
-                  description: niche.description || "",
-                  featured_image_url: niche.featured_image_url || "",
-                  video_count: niche.video_niches?.[0]?.count || 0,
-                }}
-                index={index}
-              />
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-20 bg-card/50 rounded-2xl border border-border/50"
+        {/* CTA para Portfolio */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="text-center"
+        >
+          <Link
+            to="/portfolio"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-all hover:scale-105"
           >
-            <p className="text-muted-foreground text-lg mb-4">
-              Nenhum nicho cadastrado ainda.
-            </p>
-            <p className="text-sm text-muted-foreground/60">
-              Acesse o painel administrativo para adicionar nichos.
-            </p>
-          </motion.div>
-        )}
+            Ver Portfolio Completo
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
