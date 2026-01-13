@@ -55,8 +55,8 @@ const ProjectCoverPage = () => {
 
         {/* Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-8">
-          <Link to="/portfolio" className="absolute top-8 left-8">
-            <img src={logoLight} alt="Rodaxe" className="h-12 invert" />
+          <Link to="/portfolio" className="absolute top-8 left-8 h-14 md:h-16 overflow-hidden flex items-center">
+            <img src={logoLight} alt="Rodaxe" className="h-36 md:h-44 w-auto object-cover object-center -my-10" />
           </Link>
 
           <div className="text-center max-w-2xl">

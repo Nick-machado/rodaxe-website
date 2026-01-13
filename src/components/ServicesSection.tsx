@@ -206,11 +206,13 @@ const ServicesSection = () => {
                 </span>
 
                 {/* Logo watermark */}
-                <img
-                  src={logoLight}
-                  alt="Rodaxe"
-                  className="absolute top-4 right-4 h-8 w-auto opacity-15"
-                />
+                <div className="absolute top-2 right-2 h-10 md:h-12 overflow-hidden flex items-center opacity-15">
+                  <img
+                    src={logoLight}
+                    alt="Rodaxe"
+                    className="h-24 md:h-28 w-auto object-cover object-center -my-6"
+                  />
+                </div>
 
                 {/* Icon */}
                 <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5">
