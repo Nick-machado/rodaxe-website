@@ -14,6 +14,7 @@ import {
   Users,
   FileText,
   Calendar,
+  Image,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,6 +46,7 @@ const AdminLayout = () => {
 
   const siteManagementItems = [
     { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/admin/portfolio", label: "Portfolio", icon: Image },
     { href: "/admin/videos", label: "Vídeos", icon: Video },
     { href: "/admin/niches", label: "Nichos", icon: Folder },
     { href: "/admin/tags", label: "Tags", icon: Tag },
