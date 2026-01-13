@@ -35,15 +35,15 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="relative h-screen flex flex-col items-center justify-center text-center px-6">
+      <div className="relative min-h-screen flex flex-col items-center justify-start pt-32 md:pt-40 px-6">
         {/* Main Headline */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-5xl mb-8"
+          className="max-w-5xl mb-8 text-center"
         >
-          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-light text-foreground leading-[1.1] tracking-tight">
+          <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-light text-foreground leading-[1.1] tracking-tight">
             Cria a tua{" "}
             <span className="text-primary font-medium">marca</span>,
             <br />
@@ -57,7 +57,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          className="flex items-center gap-4"
+          className="flex items-center gap-4 mb-12"
         >
           <motion.button
             onClick={scrollToNiches}
@@ -79,12 +79,12 @@ const HeroSection = () => {
 
         {/* Video Showcase Card */}
         <motion.div
-          initial={{ opacity: 0, y: 60 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-          className="absolute bottom-16 left-1/2 -translate-x-1/2 w-full max-w-4xl px-6"
+          className="w-full max-w-4xl"
         >
-          <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-background/50 group cursor-pointer">
+          <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-background/50 group cursor-pointer border border-border/30">
             <img 
               src={heroImage} 
               alt="Rodaxe Audiovisual - Captação Aérea" 
@@ -102,7 +102,7 @@ const HeroSection = () => {
                 transition={{ delay: 1, duration: 0.8 }}
                 className="text-center"
               >
-                <p className="font-display text-4xl md:text-5xl lg:text-6xl font-light text-foreground/90 italic tracking-wide">
+                <p className="font-display text-3xl md:text-4xl lg:text-5xl font-light text-foreground/90 italic tracking-wide">
                   Rodaxe
                 </p>
                 <p className="text-xs md:text-sm tracking-[0.5em] text-foreground/60 uppercase mt-2">
