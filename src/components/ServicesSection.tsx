@@ -56,8 +56,9 @@ const ServicesSection = () => {
     const totalCards = cards.length;
     const totalTransitions = totalCards - 1; // 4 transitions for 5 cards
 
-    // Each transition gets 25% of scroll (100% / 4 = 25%)
-    const transitionPercent = 100 / totalTransitions;
+    // Use only 80% of scroll for transitions, leaving 20% for last card to stay visible
+    const scrollUsed = 80;
+    const transitionPercent = scrollUsed / totalTransitions; // ~20% per transition
 
     // Create context for cleanup
     const ctx = gsap.context(() => {
