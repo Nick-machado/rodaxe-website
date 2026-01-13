@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { Niche } from "@/lib/mockData";
 
 interface NicheCardProps {
@@ -9,47 +10,70 @@ interface NicheCardProps {
 
 const NicheCard = ({ niche, index }: NicheCardProps) => {
   return (
-    <Link
-      to={`/niche/${niche.slug}`}
-      className="group relative aspect-[4/5] overflow-hidden rounded-lg card-hover block bg-card border border-border"
-      style={{ animationDelay: `${index * 100}ms` }}
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      viewport={{ once: true, margin: "-50px" }}
     >
-      {/* Image */}
-      {niche.featured_image_url ? (
-        <img
-          src={niche.featured_image_url}
-          alt={niche.name}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
-      ) : (
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-          <span className="text-muted-foreground text-sm">Sem imagem</span>
-        </div>
-      )}
+      <Link
+        to={`/niche/${niche.slug}`}
+        className="group relative block overflow-hidden rounded-xl bg-card border border-border/50 hover:border-primary/30 transition-all duration-500"
+      >
+        {/* Image Container */}
+        <div className="relative aspect-[4/3] overflow-hidden">
+          {niche.featured_image_url ? (
+            <motion.img
+              src={niche.featured_image_url}
+              alt={niche.name}
+              className="absolute inset-0 w-full h-full object-cover"
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+            />
+          ) : (
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+              <span className="text-muted-foreground text-sm">Sem imagem</span>
+            </div>
+          )}
 
-      {/* Overlay */}
-      <div className="absolute inset-0 video-overlay opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+          {/* Hover Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
-      {/* Content */}
-      <div className="absolute inset-0 p-6 flex flex-col justify-end">
-        <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-          <p className="cinematic-text text-xs text-primary tracking-widest mb-2 font-medium">
-            {niche.video_count} {niche.video_count === 1 ? 'vídeo' : 'vídeos'}
-          </p>
-          <h3 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-2">
-            {niche.name}
-          </h3>
-          <p className="text-muted-foreground text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 line-clamp-2">
-            {niche.description}
-          </p>
+          {/* Arrow Icon */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileHover={{ opacity: 1, scale: 1 }}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-foreground/10 backdrop-blur-sm border border-foreground/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
+          >
+            <ArrowUpRight size={18} className="text-foreground" />
+          </motion.div>
         </div>
 
-        {/* Arrow */}
-        <div className="absolute top-6 right-6 w-10 h-10 rounded-full border border-foreground/30 flex items-center justify-center text-foreground opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:border-primary group-hover:text-primary">
-          <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
+        {/* Content */}
+        <div className="p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="font-display text-xl md:text-2xl font-medium text-foreground mb-2 group-hover:text-primary transition-colors duration-300">
+                {niche.name}
+              </h3>
+              {niche.description && (
+                <p className="text-muted-foreground text-sm line-clamp-2">
+                  {niche.description}
+                </p>
+              )}
+            </div>
+            
+            {/* Video count badge */}
+            <div className="shrink-0 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+              {niche.video_count} {niche.video_count === 1 ? 'vídeo' : 'vídeos'}
+            </div>
+          </div>
         </div>
-      </div>
-    </Link>
+
+        {/* Bottom accent line */}
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      </Link>
+    </motion.div>
   );
 };
 

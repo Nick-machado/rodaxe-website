@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import NicheCard from "./NicheCard";
 
@@ -19,29 +20,40 @@ const NichesGrid = () => {
   });
 
   return (
-    <section id="niches" className="py-24 bg-background">
+    <section id="niches" className="py-32 bg-card/30">
       <div className="container mx-auto px-6">
         {/* Header */}
-        <div className="text-center mb-16">
-          <p className="cinematic-text text-sm text-primary tracking-[0.3em] mb-4 font-medium">
-            Nossos Serviços
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-20"
+        >
+          <p className="text-xs tracking-[0.3em] text-primary mb-4 font-medium uppercase">
+            Nosso Trabalho
           </p>
-          <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Explore o Portfólio
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-light text-foreground mb-4">
+            Explore o <span className="text-primary font-medium">Portfólio</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             Especializados em captação aérea para o mercado imobiliário.
             Navegue pelos nossos nichos e descubra como valorizamos cada propriedade.
           </p>
-        </div>
+        </motion.div>
 
         {/* Grid */}
         {isLoading ? (
           <div className="text-center py-12 text-muted-foreground">
-            Carregando...
+            <motion.div
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              Carregando...
+            </motion.div>
           </div>
         ) : niches.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {niches.map((niche: any, index: number) => (
               <NicheCard
                 key={niche.id}
@@ -58,14 +70,18 @@ const NichesGrid = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-card rounded-lg border border-border">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20 bg-card/50 rounded-2xl border border-border/50"
+          >
             <p className="text-muted-foreground text-lg mb-4">
               Nenhum nicho cadastrado ainda.
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground/60">
               Acesse o painel administrativo para adicionar nichos.
             </p>
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

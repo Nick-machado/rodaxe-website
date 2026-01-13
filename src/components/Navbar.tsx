@@ -1,7 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 import logoLight from "@/assets/logo-rodaxe-light.png";
 
 const Navbar = () => {
@@ -18,68 +19,52 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/#niches", label: "Portfólio" },
-    { href: "/contato", label: "Contato" },
+    { href: "/", label: "HOME" },
+    { href: "/#niches", label: "PORTFÓLIO" },
+    { href: "/#services", label: "SERVIÇOS" },
+    { href: "/#about", label: "SOBRE" },
   ];
 
+  const scrollToContact = () => {
+    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <nav
+    <motion.nav
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 border border-transparent",
-        isScrolled ? "glass-dark py-3" : "bg-transparent py-5"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+        isScrolled 
+          ? "bg-background/95 backdrop-blur-md py-3 border-b border-border/50" 
+          : "bg-transparent py-5"
       )}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center h-16 md:h-20 overflow-hidden">
-          <img 
+        {/* Logo */}
+        <Link to="/" className="flex items-center h-14 md:h-16 overflow-hidden">
+          <motion.img 
             src={logoLight} 
             alt="Rodaxe Audiovisual" 
-            className="h-44 md:h-52 w-auto object-cover object-center -my-14"
+            className="h-36 md:h-44 w-auto object-cover object-center -my-10"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
           />
         </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              to={link.href}
-              className={cn(
-                "text-sm font-medium tracking-wide transition-colors",
-                location.pathname === link.href
-                  ? "text-primary"
-                  : "text-foreground/80 hover:text-foreground"
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-foreground"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Navigation */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden glass-dark mt-2 mx-4 rounded-lg p-6 animate-fade-in">
-          <div className="flex flex-col gap-4">
+        {/* Desktop Navigation - Centered with pill background */}
+        <div className="hidden md:flex items-center">
+          <div className="flex items-center gap-1 bg-card/80 backdrop-blur-sm rounded-full px-2 py-2 border border-border/30">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
-                  "text-sm font-medium tracking-wide transition-colors py-2",
+                  "text-xs font-medium tracking-widest transition-all duration-300 px-5 py-2 rounded-full",
                   location.pathname === link.href
-                    ? "text-primary"
-                    : "text-foreground/80"
+                    ? "bg-foreground/10 text-foreground"
+                    : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
                 )}
               >
                 {link.label}
@@ -87,8 +72,77 @@ const Navbar = () => {
             ))}
           </div>
         </div>
-      )}
-    </nav>
+
+        {/* CTA Button */}
+        <motion.button
+          onClick={scrollToContact}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full text-xs font-semibold tracking-widest transition-all duration-300 hover:shadow-lg hover:shadow-primary/30"
+        >
+          FALE CONOSCO
+          <ArrowDown size={14} />
+        </motion.button>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-foreground p-2"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Navigation */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-card/95 backdrop-blur-md mt-2 mx-4 rounded-2xl p-6 border border-border/50"
+          >
+            <div className="flex flex-col gap-2">
+              {navLinks.map((link, index) => (
+                <motion.div
+                  key={link.href}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Link
+                    to={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn(
+                      "text-sm font-medium tracking-widest transition-colors py-3 px-4 rounded-lg block",
+                      location.pathname === link.href
+                        ? "text-foreground bg-foreground/10"
+                        : "text-foreground/60 hover:text-foreground hover:bg-foreground/5"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                </motion.div>
+              ))}
+              <motion.button
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: navLinks.length * 0.1 }}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  scrollToContact();
+                }}
+                className="mt-4 flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full text-xs font-semibold tracking-widest"
+              >
+                FALE CONOSCO
+                <ArrowDown size={14} />
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
 };
 

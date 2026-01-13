@@ -1,8 +1,10 @@
 import { Helmet } from "react-helmet-async";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import ServicesSection from "@/components/ServicesSection";
 import NichesGrid from "@/components/NichesGrid";
-import Footer from "@/components/Footer";
+import AboutSection from "@/components/AboutSection";
+import ContactSection from "@/components/ContactSection";
 
 const Index = () => {
   return (
@@ -18,8 +20,10 @@ const Index = () => {
       <div className="min-h-screen bg-background dark">
         <Navbar />
         <HeroSection />
+        <ServicesSection />
         <NichesGrid />
-        <Footer />
+        <AboutSection />
+        <ContactSection />
       </div>
     </>
   );
