@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 8%;
 
-    --primary: 0 85% 50%;
+    --primary: 0 97% 42%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 96%;
@@ -32,12 +32,12 @@
 
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 0 85% 50%;
+    --ring: 0 97% 42%;
 
     --radius: 0.25rem;
 
     /* Custom tokens - Rodaxe brand */
-    --rodaxe-red: 0 85% 50%;
+    --rodaxe-red: 0 97% 42%;
     --rodaxe-black: 0 0% 8%;
     --rodaxe-white: 0 0% 100%;
     --rodaxe-gray: 0 0% 45%;
@@ -47,12 +47,12 @@
     --gradient-dark: linear-gradient(180deg, hsl(0 0% 0%), hsl(0 0% 10%));
     --gradient-overlay: linear-gradient(to top, hsl(0 0% 0% / 0.85), hsl(0 0% 0% / 0.4), transparent);
     --gradient-hero: linear-gradient(180deg, transparent 0%, hsl(0 0% 0% / 0.5) 50%, hsl(0 0% 0%) 100%);
-    --gradient-red: linear-gradient(135deg, hsl(0 85% 50%), hsl(0 85% 60%));
+    --gradient-red: linear-gradient(135deg, hsl(0 97% 42%), hsl(0 97% 52%));
 
     /* Shadows */
     --shadow-soft: 0 10px 40px hsl(0 0% 0% / 0.1);
     --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.08);
-    --shadow-red: 0 4px 30px hsl(0 85% 50% / 0.2);
+    --shadow-red: 0 4px 30px hsl(0 97% 42% / 0.2);
 
     /* Typography */
     --font-display: 'Montserrat', sans-serif;
@@ -64,12 +64,12 @@
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 8%;
-    --sidebar-primary: 0 85% 50%;
+    --sidebar-primary: 0 97% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 94%;
     --sidebar-accent-foreground: 0 0% 8%;
     --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 85% 50%;
+    --sidebar-ring: 0 97% 42%;
   }
 
   .dark {
@@ -82,7 +82,7 @@
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 95%;
 
-    --primary: 0 85% 50%;
+    --primary: 0 97% 42%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 12%;
@@ -99,16 +99,16 @@
 
     --border: 0 0% 18%;
     --input: 0 0% 18%;
-    --ring: 0 85% 50%;
+    --ring: 0 97% 42%;
 
     --sidebar-background: 0 0% 6%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 0 85% 50%;
+    --sidebar-primary: 0 97% 42%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 12%;
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 0 85% 50%;
+    --sidebar-ring: 0 97% 42%;
   }
 }
 
@@ -142,7 +142,7 @@
   }
 
   .btn-primary:hover {
-    box-shadow: 0 6px 40px hsl(0 85% 50% / 0.3);
+    box-shadow: 0 6px 40px hsl(0 97% 42% / 0.3);
     transform: translateY(-2px);
   }
 
