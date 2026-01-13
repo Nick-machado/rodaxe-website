@@ -17,8 +17,14 @@ import ClientesManagement from "./pages/admin/trabalhos/ClientesManagement";
 import TrabalhosManagement from "./pages/admin/trabalhos/TrabalhosManagement";
 import RelatorioPage from "./pages/admin/trabalhos/RelatorioPage";
 import CalendarPage from "./pages/admin/trabalhos/CalendarPage";
+import PortfolioManagement from "./pages/admin/PortfolioManagement";
 import PublicLink from "./pages/PublicLink";
 import NotFound from "./pages/NotFound";
+
+// Portfolio public pages
+import PortfolioPage from "./pages/portfolio/PortfolioPage";
+import ProjectCoverPage from "./pages/portfolio/ProjectCoverPage";
+import ProjectGalleryPage from "./pages/portfolio/ProjectGalleryPage";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +42,11 @@ const App = () => (
               <Route path="/niche/:slug" element={<NichePage />} />
               <Route path="/link/:token" element={<PublicLink />} />
 
+              {/* Portfolio Public Routes */}
+              <Route path="/portfolio" element={<PortfolioPage />} />
+              <Route path="/portfolio/:slug" element={<ProjectCoverPage />} />
+              <Route path="/portfolio/:slug/gallery" element={<ProjectGalleryPage />} />
+
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLogin />} />
               <Route path="/admin" element={<AdminLayout />}>
@@ -43,6 +54,7 @@ const App = () => (
                 <Route path="videos" element={<VideosManagement />} />
                 <Route path="niches" element={<NichesManagement />} />
                 <Route path="tags" element={<TagsManagement />} />
+                <Route path="portfolio" element={<PortfolioManagement />} />
                 <Route path="clientes" element={<ClientesManagement />} />
                 <Route path="trabalhos" element={<TrabalhosManagement />} />
                 <Route path="relatorio" element={<RelatorioPage />} />

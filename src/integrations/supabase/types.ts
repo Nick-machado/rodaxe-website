@@ -172,6 +172,86 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_media: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          sort_order: number
+          thumbnail_url: string | null
+          title: string | null
+          type: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          sort_order?: number
+          thumbnail_url?: string | null
+          title?: string | null
+          type?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          sort_order?: number
+          thumbnail_url?: string | null
+          title?: string | null
+          type?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_media_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "portfolio_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portfolio_projects: {
+        Row: {
+          cover_image_url: string
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          location: string | null
+          project_date: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_image_url: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          location?: string | null
+          project_date?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_image_url?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          location?: string | null
+          project_date?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
