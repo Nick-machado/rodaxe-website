@@ -12,6 +12,9 @@ interface Arquivo {
   tipo: string;
 }
 
+// UUID format validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -22,9 +25,18 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const token = url.searchParams.get("token");
 
+    // Validate token exists
     if (!token) {
       return new Response(
         JSON.stringify({ error: "Token não fornecido" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate token format (UUID) - prevents injection and limits input size
+    if (!UUID_REGEX.test(token)) {
+      return new Response(
+        JSON.stringify({ error: "Formato de token inválido" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

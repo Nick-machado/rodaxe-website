@@ -6,6 +6,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// UUID format validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -16,9 +19,26 @@ serve(async (req) => {
     const token = url.searchParams.get("token");
     const fileId = url.searchParams.get("fileId");
 
+    // Validate both parameters exist
     if (!token || !fileId) {
       return new Response(
         JSON.stringify({ error: "Token e fileId são obrigatórios" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate token format (UUID) - prevents injection and limits input size
+    if (!UUID_REGEX.test(token)) {
+      return new Response(
+        JSON.stringify({ error: "Formato de token inválido" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate fileId format (UUID)
+    if (!UUID_REGEX.test(fileId)) {
+      return new Response(
+        JSON.stringify({ error: "Formato de fileId inválido" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
