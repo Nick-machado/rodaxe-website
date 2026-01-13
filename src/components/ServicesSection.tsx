@@ -42,23 +42,25 @@ const services = [
 
 const ServicesSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
   const bgTextRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
-    const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
+    const container = cardsContainerRef.current;
     const bgText = bgTextRef.current;
 
-    if (!section || cards.length === 0) return;
+    if (!section || !container) return;
+
+    const cards = gsap.utils.toArray<HTMLElement>(".service-card");
+    const totalCards = cards.length;
 
     // Create context for cleanup
     const ctx = gsap.context(() => {
       // Background text parallax
       if (bgText) {
         gsap.to(bgText, {
-          x: "20%",
+          xPercent: 20,
           ease: "none",
           scrollTrigger: {
             trigger: section,
@@ -69,57 +71,66 @@ const ServicesSection = () => {
         });
       }
 
-      // Cards animation
-      const totalCards = cards.length;
-      const scrollPerCard = 100 / totalCards; // percentage of scroll per card
-
+      // Set initial z-index (first card on top)
       cards.forEach((card, i) => {
-        // Set initial state for cards behind the first one
-        if (i > 0) {
-          gsap.set(card, {
-            scale: 1 - i * 0.05,
-            y: i * 40,
-            rotateX: -10,
-            zIndex: totalCards - i,
-          });
-        } else {
-          gsap.set(card, {
-            scale: 1,
-            y: 0,
-            rotateX: 0,
-            zIndex: totalCards,
-          });
-        }
+        gsap.set(card, {
+          zIndex: totalCards - i,
+        });
+      });
 
-        // Exit animation for all cards except the last
+      // Create timeline for each card
+      cards.forEach((card, i) => {
+        // Only animate cards that are not the last one (they exit)
         if (i < totalCards - 1) {
-          gsap.to(card, {
-            y: "-100vh",
-            opacity: 0,
-            scale: 0.8,
-            ease: "power1.in",
+          const tl = gsap.timeline({
             scrollTrigger: {
               trigger: section,
-              start: `top+=${i * scrollPerCard}% top`,
-              end: `top+=${(i + 1) * scrollPerCard}% top`,
+              start: () => `top+=${(i * 100) / (totalCards - 1)}% top`,
+              end: () => `top+=${((i + 1) * 100) / (totalCards - 1)}% top`,
               scrub: 1,
+              invalidateOnRefresh: true,
             },
           });
-        }
 
-        // Entrance animation for cards behind
+          // Card exits by moving up and fading out
+          tl.to(card, {
+            yPercent: -120,
+            opacity: 0,
+            scale: 0.9,
+            rotateX: 10,
+            duration: 1,
+            ease: "power2.inOut",
+          });
+        }
+      });
+
+      // Animate cards coming from behind (scale up as previous card exits)
+      cards.forEach((card, i) => {
         if (i > 0) {
-          gsap.to(card, {
-            scale: 1,
-            y: 0,
-            rotateX: 0,
-            ease: "power2.out",
+          // Set initial state for cards behind
+          gsap.set(card, {
+            scale: 0.85 - (i - 1) * 0.03,
+            yPercent: 8 + (i - 1) * 4,
+            rotateX: -8,
+          });
+
+          const tl = gsap.timeline({
             scrollTrigger: {
               trigger: section,
-              start: `top+=${(i - 1) * scrollPerCard}% top`,
-              end: `top+=${i * scrollPerCard}% top`,
+              start: () => `top+=${((i - 1) * 100) / (totalCards - 1)}% top`,
+              end: () => `top+=${(i * 100) / (totalCards - 1)}% top`,
               scrub: 1,
+              invalidateOnRefresh: true,
             },
+          });
+
+          // Card comes to front
+          tl.to(card, {
+            scale: 1,
+            yPercent: 0,
+            rotateX: 0,
+            duration: 1,
+            ease: "power2.out",
           });
         }
       });
@@ -133,27 +144,23 @@ const ServicesSection = () => {
       ref={sectionRef}
       id="services"
       className="relative bg-background"
-      style={{ height: "500vh" }}
+      style={{ height: "400vh" }}
     >
       {/* Background parallax text */}
       <div
         ref={bgTextRef}
-        className="fixed top-1/2 left-0 -translate-y-1/2 pointer-events-none select-none z-0 will-change-transform"
-        style={{ transform: "translateX(-10%)" }}
+        className="fixed top-1/2 left-0 -translate-y-1/2 pointer-events-none select-none z-0"
+        style={{ transform: "translateX(-15%)" }}
       >
-        <h2 className="text-[25vw] font-display font-bold text-foreground/[0.03] tracking-tight whitespace-nowrap">
+        <h2 className="text-[22vw] font-display font-bold text-foreground/[0.03] tracking-tight whitespace-nowrap">
           SERVIÇOS
         </h2>
       </div>
 
       {/* Sticky container */}
-      <div
-        ref={stickyRef}
-        className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden"
-        style={{ perspective: "1000px" }}
-      >
+      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
         {/* Section header */}
-        <div className="absolute top-24 left-0 right-0 text-center z-10">
+        <div className="absolute top-20 md:top-24 left-0 right-0 text-center z-20">
           <p className="text-xs tracking-[0.3em] text-primary mb-2 font-medium uppercase">
             O que fazemos
           </p>
@@ -162,49 +169,53 @@ const ServicesSection = () => {
           </h2>
         </div>
 
-        {/* Cards stack */}
+        {/* Cards container with 3D perspective */}
         <div
-          className="relative w-[90vw] max-w-[700px] aspect-[4/3] flex items-center justify-center"
-          style={{ transformStyle: "preserve-3d" }}
+          ref={cardsContainerRef}
+          className="relative w-[90vw] max-w-[700px] h-[400px] md:h-[450px]"
+          style={{ 
+            perspective: "1200px",
+            perspectiveOrigin: "center center",
+          }}
         >
           {services.map((service, index) => (
             <div
               key={service.number}
-              ref={(el) => (cardsRef.current[index] = el)}
-              className="absolute inset-0 flex flex-col items-center justify-center p-8 md:p-12 will-change-transform"
+              className="service-card absolute inset-0 will-change-transform"
               style={{
                 transformStyle: "preserve-3d",
-                backfaceVisibility: "hidden",
+                transformOrigin: "center bottom",
               }}
             >
               {/* Card content */}
               <div
-                className="w-full h-full rounded-3xl border border-primary/30 flex flex-col items-center justify-center p-8 md:p-12 relative overflow-hidden"
+                className="w-full h-full rounded-3xl border border-primary/30 flex flex-col items-center justify-center p-6 md:p-10 relative overflow-hidden"
                 style={{
-                  backgroundColor: "rgba(20, 20, 20, 0.7)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
+                  backgroundColor: "rgba(18, 18, 18, 0.85)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
                 }}
               >
                 {/* Number */}
-                <span className="absolute top-6 left-8 text-primary/40 font-display text-lg font-bold">
+                <span className="absolute top-5 left-6 text-primary/50 font-display text-base font-bold tracking-wider">
                   {service.number}
                 </span>
 
-                {/* Logo */}
+                {/* Logo watermark */}
                 <img
                   src={logoLight}
                   alt="Rodaxe"
-                  className="h-12 w-auto mb-6 opacity-20"
+                  className="absolute top-4 right-4 h-8 w-auto opacity-15"
                 />
 
                 {/* Icon */}
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
-                  <service.icon size={32} className="text-primary" />
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5">
+                  <service.icon size={28} className="text-primary" />
                 </div>
 
                 {/* Title */}
-                <h3 className="font-display text-2xl md:text-3xl font-medium text-foreground text-center mb-4">
+                <h3 className="font-display text-xl md:text-2xl lg:text-3xl font-medium text-foreground text-center mb-3">
                   {service.title}
                 </h3>
 
@@ -213,20 +224,25 @@ const ServicesSection = () => {
                   {service.description}
                 </p>
 
-                {/* Decorative corner accents */}
-                <div className="absolute top-4 right-4 w-8 h-8 border-t border-r border-primary/20 rounded-tr-lg" />
-                <div className="absolute bottom-4 left-4 w-8 h-8 border-b border-l border-primary/20 rounded-bl-lg" />
+                {/* Decorative elements */}
+                <div className="absolute top-3 right-3 w-6 h-6 border-t border-r border-primary/20 rounded-tr-lg" />
+                <div className="absolute bottom-3 left-3 w-6 h-6 border-b border-l border-primary/20 rounded-bl-lg" />
+                
+                {/* Bottom gradient line */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
               </div>
             </div>
           ))}
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-          <span className="text-xs text-muted-foreground/50 tracking-widest uppercase">
+        {/* Progress indicator */}
+        <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+          <span className="text-[10px] text-muted-foreground/40 tracking-[0.2em] uppercase">
             Role para explorar
           </span>
-          <div className="w-px h-8 bg-gradient-to-b from-primary/50 to-transparent" />
+          <div className="w-6 h-10 rounded-full border border-muted-foreground/20 flex items-start justify-center p-2">
+            <div className="w-1 h-2 rounded-full bg-primary animate-bounce" />
+          </div>
         </div>
       </div>
     </section>
