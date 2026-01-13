@@ -5,18 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Search, Globe, Phone, Mail, Facebook, Instagram, Youtube } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPortfolioProjects, PortfolioProject } from "@/hooks/usePortfolioApi";
 import logoLight from "@/assets/logo-rodaxe-light.png";
-
-interface PortfolioProject {
-  id: string;
-  title: string;
-  slug: string;
-  location: string | null;
-  cover_image_url: string;
-  project_date: string | null;
-  is_published: boolean;
-}
 
 const PortfolioPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,16 +15,8 @@ const PortfolioPage = () => {
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ["portfolio-projects"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("portfolio_projects")
-        .select("id, title, slug, location, cover_image_url, project_date, is_published")
-        .eq("is_published", true)
-        .order("project_date", { ascending: false });
-
-      if (error) throw error;
-      return data as PortfolioProject[];
-    },
+    queryFn: fetchPortfolioProjects,
+    staleTime: 1000 * 60 * 5, // 5 minutos de cache
   });
 
   const filteredProjects = projects.filter((project) =>

@@ -4,24 +4,11 @@ import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-
-interface PortfolioProject {
-  id: string;
-  title: string;
-  slug: string;
-  location: string | null;
-}
-
-interface PortfolioMedia {
-  id: string;
-  project_id: string;
-  type: string;
-  url: string;
-  thumbnail_url: string | null;
-  title: string | null;
-  sort_order: number;
-}
+import { 
+  fetchPortfolioProject, 
+  fetchPortfolioMedia, 
+  PortfolioMedia 
+} from "@/hooks/usePortfolioApi";
 
 const ProjectGalleryPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -30,33 +17,16 @@ const ProjectGalleryPage = () => {
 
   const { data: project, isLoading: projectLoading } = useQuery({
     queryKey: ["portfolio-project", slug],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("portfolio_projects")
-        .select("id, title, slug, location")
-        .eq("slug", slug)
-        .eq("is_published", true)
-        .single();
-
-      if (error) throw error;
-      return data as PortfolioProject;
-    },
+    queryFn: () => fetchPortfolioProject(slug!),
     enabled: !!slug,
+    staleTime: 1000 * 60 * 5,
   });
 
   const { data: media = [], isLoading: mediaLoading } = useQuery({
     queryKey: ["portfolio-media", project?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("portfolio_media")
-        .select("*")
-        .eq("project_id", project!.id)
-        .order("sort_order", { ascending: true });
-
-      if (error) throw error;
-      return data as PortfolioMedia[];
-    },
+    queryFn: () => fetchPortfolioMedia(project!.id),
     enabled: !!project?.id,
+    staleTime: 1000 * 60 * 5,
   });
 
   const isLoading = projectLoading || mediaLoading;

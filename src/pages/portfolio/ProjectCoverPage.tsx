@@ -2,18 +2,8 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchPortfolioProject } from "@/hooks/usePortfolioApi";
 import logoLight from "@/assets/logo-rodaxe-light.png";
-
-interface PortfolioProject {
-  id: string;
-  title: string;
-  slug: string;
-  location: string | null;
-  cover_image_url: string;
-  project_date: string | null;
-  description: string | null;
-}
 
 const ProjectCoverPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -21,18 +11,9 @@ const ProjectCoverPage = () => {
 
   const { data: project, isLoading } = useQuery({
     queryKey: ["portfolio-project", slug],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("portfolio_projects")
-        .select("id, title, slug, location, cover_image_url, project_date, description")
-        .eq("slug", slug)
-        .eq("is_published", true)
-        .single();
-
-      if (error) throw error;
-      return data as PortfolioProject;
-    },
+    queryFn: () => fetchPortfolioProject(slug!),
     enabled: !!slug,
+    staleTime: 1000 * 60 * 5,
   });
 
   if (isLoading) {
