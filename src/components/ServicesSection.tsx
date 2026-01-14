@@ -44,7 +44,6 @@ const services = [
 const ServicesSection = memo(() => {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
-  const bgTextRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
   // Memoize animation configs
@@ -62,7 +61,6 @@ const ServicesSection = memo(() => {
 
     const section = sectionRef.current;
     const container = cardsContainerRef.current;
-    const bgText = bgTextRef.current;
 
     if (!section || !container) return;
 
@@ -70,19 +68,7 @@ const ServicesSection = memo(() => {
 
     // Create context for cleanup
     const ctx = gsap.context(() => {
-      // Background text parallax
-      if (bgText) {
-        gsap.to(bgText, {
-          xPercent: 20,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1,
-          },
-        });
-      }
+      // Background parallax removed per request
 
       // Set initial states
       cards.forEach((card, i) => {
@@ -234,16 +220,7 @@ const ServicesSection = memo(() => {
       id="services"
       style={{ height: "500vh" }}
     >
-      {/* Background parallax text */}
-      <div
-        ref={bgTextRef}
-        className="fixed top-1/2 left-0 -translate-y-1/2 pointer-events-none select-none z-0"
-        style={{ transform: "translateX(-15%)" }}
-      >
-        <h2 className="text-[22vw] font-display font-bold text-foreground/[0.03] tracking-tight whitespace-nowrap">
-          SERVIÇOS
-        </h2>
-      </div>
+      {/* Background parallax text removed */}
 
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
