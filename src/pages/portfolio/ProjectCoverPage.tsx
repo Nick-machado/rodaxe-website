@@ -78,8 +78,8 @@ const ProjectCoverPage = () => {
           {/* Project Info - Starts centered, moves up */}
           <motion.div 
             className="text-center w-full max-w-5xl"
-            initial={{ y: "0%" }}
-            animate={{ y: "0%" }}
+            initial={{ y: "20vh" }}
+            animate={{ y: 0 }}
             transition={{ delay: 1.5, duration: 0.8, ease: "easeOut" }}
           >
             <motion.h1 
