@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { fetchPortfolioProject } from "@/hooks/usePortfolioApi";
+import WavesBackground from "@/components/WavesBackground";
 import logoLight from "@/assets/logo-rodaxe-light.png";
 
 const ProjectCoverPage = () => {
@@ -44,29 +45,17 @@ const ProjectCoverPage = () => {
       </Helmet>
 
       <div className="fixed inset-0 overflow-y-auto">
-        {/* Background Video or Image */}
-        <div className="fixed inset-0 -z-10">
-          {project.cover_video_url ? (
-            <video
-              src={project.cover_video_url}
-              muted
-              loop
-              autoPlay
-              playsInline
-              poster={project.cover_image_url}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <img
-              src={project.cover_image_url}
-              alt={project.title}
-              className="w-full h-full object-cover"
-            />
-          )}
-          
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-black/60" />
+        {/* Background - Solid Gray with GSAP Animated Waves */}
+        <div className="fixed inset-0 -z-10 bg-background overflow-hidden">
+          <WavesBackground 
+            numWaves={15} 
+            amplitude={40} 
+            frequency={0.005}
+            speed={0.006}
+            opacity={0.4}
+          />
         </div>
+      
 
         {/* Logo */}
         <Link to="/portfolio" className="fixed top-8 left-8 h-14 md:h-16 overflow-hidden flex items-center z-10">
