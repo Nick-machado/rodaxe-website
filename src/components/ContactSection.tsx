@@ -32,7 +32,7 @@ const socialHoverVariants = {
 
 // Memoize ContactInfo component
 const ContactInfo = memo(({ icon: Icon, label, href, index }: {
-  icon: React.ComponentType<{ size: number; className: string }>;
+  icon: React.ElementType;
   label: string;
   href: string;
   index: number;
@@ -61,8 +61,7 @@ const ContactInfo = memo(({ icon: Icon, label, href, index }: {
       whileInView="animate"
       transition={cardTransition}
       viewport={viewport}
-      whileHover="hover"
-      variants={hoverVariants}
+      whileHover={{ scale: 1.02, x: 10 }}
       className="flex items-center gap-4 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 transition-all duration-300 hover:border-primary/30 group"
     >
       <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
