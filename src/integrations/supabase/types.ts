@@ -64,6 +64,7 @@ export type Database = {
           id: string
           is_published: boolean
           location: string | null
+          main_video_url: string | null
           project_date: string | null
           slug: string
           title: string
@@ -77,6 +78,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           location?: string | null
+          main_video_url?: string | null
           project_date?: string | null
           slug: string
           title: string
@@ -90,6 +92,7 @@ export type Database = {
           id?: string
           is_published?: boolean
           location?: string | null
+          main_video_url?: string | null
           project_date?: string | null
           slug?: string
           title?: string
