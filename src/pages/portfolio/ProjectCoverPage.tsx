@@ -114,22 +114,23 @@ const ProjectCoverPage = () => {
 
           {/* Main Video - Fades in after text moves up */}
           {project.main_video_url && (
-            <motion.div 
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 w-full max-w-4xl px-8"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.3, duration: 0.8, ease: "easeOut" }}
-            >
-              <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-                <video
-                  src={project.main_video_url}
-                  controls
-                  playsInline
-                  poster={project.cover_image_url}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </motion.div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl px-8">
+              <motion.div 
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.3, duration: 0.8, ease: "easeOut" }}
+              >
+                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+                  <video
+                    src={project.main_video_url}
+                    controls
+                    playsInline
+                    poster={project.cover_image_url}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </motion.div>
+            </div>
           )}
         </div>
       </div>
