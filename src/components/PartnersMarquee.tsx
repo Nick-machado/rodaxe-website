@@ -19,6 +19,10 @@ const PartnerLogo = memo(({ partner, keyPrefix }: { partner: typeof partners[0];
     <img
       src={partner.logo}
       alt={partner.name}
+      loading="lazy"
+      decoding="async"
+      width={160}
+      height={40}
       className="h-8 md:h-10 w-auto object-contain"
       style={{
         filter: "grayscale(100%) brightness(0.8) invert(1)",
