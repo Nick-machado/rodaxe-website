@@ -11,7 +11,7 @@ const headlineVariants = {
 
 const headlineTransition = {
   duration: 0.8,
-  ease: "easeOut",
+  ease: [0.25, 0.46, 0.45, 0.94] as const,
 };
 
 const ctaVariants = {
@@ -22,7 +22,7 @@ const ctaVariants = {
 const ctaTransition = {
   duration: 0.8,
   delay: 0.3,
-  ease: "easeOut",
+  ease: [0.25, 0.46, 0.45, 0.94] as const,
 };
 
 const showcaseVariants = {
@@ -33,7 +33,7 @@ const showcaseVariants = {
 const showcaseTransition = {
   duration: 1,
   delay: 0.5,
-  ease: "easeOut",
+  ease: [0.25, 0.46, 0.45, 0.94] as const,
 };
 
 const overlayTextVariants = {
