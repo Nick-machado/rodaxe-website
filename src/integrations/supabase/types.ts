@@ -58,6 +58,7 @@ export type Database = {
       portfolio_projects: {
         Row: {
           cover_image_url: string
+          cover_video_url: string | null
           created_at: string
           description: string | null
           id: string
@@ -70,6 +71,7 @@ export type Database = {
         }
         Insert: {
           cover_image_url: string
+          cover_video_url?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -82,6 +84,7 @@ export type Database = {
         }
         Update: {
           cover_image_url?: string
+          cover_video_url?: string | null
           created_at?: string
           description?: string | null
           id?: string

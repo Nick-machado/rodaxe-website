@@ -6,6 +6,7 @@ export interface PortfolioProject {
   slug: string;
   location: string | null;
   cover_image_url: string;
+  cover_video_url: string | null;
   project_date: string | null;
   description: string | null;
 }

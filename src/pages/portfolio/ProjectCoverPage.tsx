@@ -43,12 +43,24 @@ const ProjectCoverPage = () => {
       </Helmet>
 
       <div className="fixed inset-0">
-        {/* Cover Image */}
-        <img
-          src={project.cover_image_url}
-          alt={project.title}
-          className="w-full h-full object-cover"
-        />
+        {/* Cover Media - Video or Image */}
+        {project.cover_video_url ? (
+          <video
+            src={project.cover_video_url}
+            muted
+            loop
+            autoPlay
+            playsInline
+            poster={project.cover_image_url}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <img
+            src={project.cover_image_url}
+            alt={project.title}
+            className="w-full h-full object-cover"
+          />
+        )}
         
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/80" />
@@ -69,17 +81,10 @@ const ProjectCoverPage = () => {
               </p>
             )}
             {project.description && (
-              <p className="text-white/70 mb-8 max-w-lg mx-auto">
+              <p className="text-white/70 max-w-lg mx-auto">
                 {project.description}
               </p>
             )}
-            <Button
-              onClick={() => navigate(`/portfolio/${slug}/gallery`)}
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-black transition-all"
-            >
-              Ver Galeria
-            </Button>
           </div>
         </div>
       </div>
