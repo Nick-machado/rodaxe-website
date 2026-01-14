@@ -7,6 +7,7 @@ export interface PortfolioProject {
   location: string | null;
   cover_image_url: string;
   cover_video_url: string | null;
+  main_video_url: string | null;
   project_date: string | null;
   description: string | null;
 }
