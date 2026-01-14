@@ -74,12 +74,12 @@ const ProjectCoverPage = () => {
         </Link>
 
         {/* Content */}
-        <div className="min-h-screen flex flex-col items-center justify-center text-white p-8 pt-24 pb-16">
+        <div className="min-h-screen flex flex-col items-center justify-center text-white p-8">
           {/* Project Info - Starts centered, moves up */}
           <motion.div 
             className="text-center w-full max-w-5xl"
-            initial={{ y: 0 }}
-            animate={{ y: project.main_video_url ? -60 : 0 }}
+            initial={{ y: "0%" }}
+            animate={{ y: project.main_video_url ? "-20vh" : "0%" }}
             transition={{ delay: 1.5, duration: 0.8, ease: "easeOut" }}
           >
             <motion.h1 
@@ -115,18 +115,20 @@ const ProjectCoverPage = () => {
           {/* Main Video - Fades in after text moves up */}
           {project.main_video_url && (
             <motion.div 
-              className="w-full max-w-4xl mt-12"
-              initial={{ opacity: 0, y: 30 }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 w-full max-w-4xl px-8"
+              initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2.3, duration: 0.8, ease: "easeOut" }}
             >
-              <video
-                src={project.main_video_url}
-                controls
-                playsInline
-                poster={project.cover_image_url}
-                className="w-full rounded-lg shadow-2xl"
-              />
+              <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+                <video
+                  src={project.main_video_url}
+                  controls
+                  playsInline
+                  poster={project.cover_image_url}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </motion.div>
           )}
         </div>
