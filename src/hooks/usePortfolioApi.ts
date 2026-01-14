@@ -1,4 +1,4 @@
-const API_URL = 'https://plqxoyihozkofsaknqbb.supabase.co/functions/v1/portfolio-api';
+const API_URL = import.meta.env.VITE_PORTFOLIO_API_URL;
 
 export interface PortfolioProject {
   id: string;

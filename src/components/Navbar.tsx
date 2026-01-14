@@ -1,39 +1,89 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo, useCallback } from "react";
 import { Menu, X, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import logoLight from "@/assets/logo-rodaxe-light.png";
 
-const Navbar = () => {
+// Memoize navbar animation variants
+const navbarVariants = {
+  initial: { y: -100, opacity: 0 },
+  animate: { y: 0, opacity: 1 },
+};
+
+const navbarTransition = {
+  duration: 0.6,
+  ease: "easeOut",
+};
+
+const mobileMenuVariants = {
+  initial: { opacity: 0, height: 0 },
+  animate: { opacity: 1, height: "auto" },
+  exit: { opacity: 0, height: 0 },
+};
+
+const mobileMenuTransition = {
+  duration: 0.3,
+};
+
+const logoHoverVariants = {
+  hover: { scale: 1.05 },
+};
+
+const logoTransition = {
+  duration: 0.3,
+};
+
+const Navbar = memo(() => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      lastScrollY = window.scrollY;
+      
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(lastScrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
+  const navLinks = useMemo(() => [
     { href: "/", label: "HOME" },
     { href: "/portfolio", label: "PORTFÓLIO" },
     { href: "/#services", label: "SERVIÇOS" },
     { href: "/#about", label: "SOBRE" },
-  ];
+  ], []);
 
-  const scrollToContact = () => {
+  const scrollToContact = useCallback(() => {
     document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
+
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
 
   return (
     <motion.nav
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      variants={navbarVariants}
+      initial="initial"
+      animate="animate"
+      transition={navbarTransition}
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         isScrolled 
@@ -48,8 +98,9 @@ const Navbar = () => {
             src={logoLight} 
             alt="Rodaxe Audiovisual" 
             className="h-36 md:h-44 w-auto object-cover object-center -my-10"
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.3 }}
+            variants={logoHoverVariants}
+            whileHover="hover"
+            transition={logoTransition}
           />
         </Link>
 
@@ -74,20 +125,19 @@ const Navbar = () => {
         </div>
 
         {/* CTA Button */}
-        <motion.button
+        <button
           onClick={scrollToContact}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full text-xs font-semibold tracking-widest transition-all duration-300 hover:shadow-lg hover:shadow-primary/30"
+          className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full text-xs font-semibold tracking-widest transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg hover:shadow-primary/30"
         >
           FALE CONOSCO
           <ArrowDown size={14} />
-        </motion.button>
+        </button>
 
         {/* Mobile Menu Button */}
         <button
           className="md:hidden text-foreground p-2"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onClick={toggleMobileMenu}
+          aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -97,10 +147,11 @@ const Navbar = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            variants={mobileMenuVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={mobileMenuTransition}
             className="md:hidden bg-card/95 backdrop-blur-md mt-2 mx-4 rounded-2xl p-6 border border-border/50"
           >
             <div className="flex flex-col gap-2">
@@ -113,7 +164,7 @@ const Navbar = () => {
                 >
                   <Link
                     to={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={closeMobileMenu}
                     className={cn(
                       "text-sm font-medium tracking-widest transition-colors py-3 px-4 rounded-lg block",
                       location.pathname === link.href
@@ -130,7 +181,7 @@ const Navbar = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: navLinks.length * 0.1 }}
                 onClick={() => {
-                  setIsMobileMenuOpen(false);
+                  closeMobileMenu();
                   scrollToContact();
                 }}
                 className="mt-4 flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full text-xs font-semibold tracking-widest"
@@ -144,6 +195,8 @@ const Navbar = () => {
       </AnimatePresence>
     </motion.nav>
   );
-};
+});
+
+Navbar.displayName = "Navbar";
 
 export default Navbar;

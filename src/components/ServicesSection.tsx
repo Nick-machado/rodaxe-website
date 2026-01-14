@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, memo, useMemo } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Camera, Film, Clapperboard, Sparkles, Video } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import logoLight from "@/assets/logo-rodaxe-light.png";
 
 // Register GSAP plugin
@@ -40,12 +41,25 @@ const services = [
   },
 ];
 
-const ServicesSection = () => {
+const ServicesSection = memo(() => {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const bgTextRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+
+  // Memoize animation configs
+  const animationConfig = useMemo(() => ({
+    totalCards: services.length,
+    totalTransitions: services.length - 1,
+    scrollUsed: 80,
+  }), []);
+
+  const { totalCards, totalTransitions, scrollUsed } = animationConfig;
+  const transitionPercent = scrollUsed / totalTransitions;
 
   useEffect(() => {
+    if (isMobile) return;
+
     const section = sectionRef.current;
     const container = cardsContainerRef.current;
     const bgText = bgTextRef.current;
@@ -53,12 +67,6 @@ const ServicesSection = () => {
     if (!section || !container) return;
 
     const cards = gsap.utils.toArray<HTMLElement>(".service-card");
-    const totalCards = cards.length;
-    const totalTransitions = totalCards - 1; // 4 transitions for 5 cards
-
-    // Use only 80% of scroll for transitions, leaving 20% for last card to stay visible
-    const scrollUsed = 80;
-    const transitionPercent = scrollUsed / totalTransitions; // ~20% per transition
 
     // Create context for cleanup
     const ctx = gsap.context(() => {
@@ -78,12 +86,10 @@ const ServicesSection = () => {
 
       // Set initial states
       cards.forEach((card, i) => {
-        // First card on top with highest z-index
         gsap.set(card, {
           zIndex: totalCards - i,
         });
 
-        // Cards behind the first one start scaled down and offset
         if (i > 0) {
           gsap.set(card, {
             scale: 0.85 - (i - 1) * 0.02,
@@ -94,54 +100,133 @@ const ServicesSection = () => {
         }
       });
 
-      // Create sequential animations for each transition
-      cards.forEach((card, i) => {
-        // Calculate the start of this card's transition phase
-        const phaseStart = i * transitionPercent;
-        
-        // EXIT animation: Card i exits (first 60% of its phase)
-        if (i < totalTransitions) {
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: section,
-              start: `top+=${phaseStart}% top`,
-              end: `top+=${phaseStart + transitionPercent * 0.6}% top`,
-              scrub: 0.5,
-              invalidateOnRefresh: true,
-            },
-          }).to(card, {
-            yPercent: -120,
-            opacity: 0,
-            scale: 0.9,
-            rotateX: 8,
-            ease: "power2.in",
-          });
-        }
+      // Single ScrollTrigger with onUpdate for all cards instead of multiple timelines
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.5,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const progress = self.progress * 100;
 
-        // ENTRY animation: Card i comes to front (last 60% of PREVIOUS phase)
-        if (i > 0) {
-          const prevPhaseStart = (i - 1) * transitionPercent;
-          
-          gsap.timeline({
-            scrollTrigger: {
-              trigger: section,
-              start: `top+=${prevPhaseStart + transitionPercent * 0.4}% top`,
-              end: `top+=${prevPhaseStart + transitionPercent}% top`,
-              scrub: 0.5,
-              invalidateOnRefresh: true,
-            },
-          }).to(card, {
-            scale: 1,
-            yPercent: 0,
-            rotateX: 0,
-            ease: "power2.out",
+          cards.forEach((card, i) => {
+            const phaseStart = i * transitionPercent;
+            const phaseEnd = phaseStart + transitionPercent;
+
+            // EXIT animation
+            if (i < totalTransitions) {
+              const exitStart = phaseStart;
+              const exitEnd = phaseStart + transitionPercent * 0.6;
+
+              if (progress >= exitStart && progress <= exitEnd) {
+                const exitProgress = (progress - exitStart) / (exitEnd - exitStart);
+                gsap.set(card, {
+                  yPercent: -120 * exitProgress,
+                  opacity: 1 - exitProgress,
+                  scale: 1 - 0.1 * exitProgress,
+                  rotateX: 8 * exitProgress,
+                });
+              } else if (progress > exitEnd) {
+                gsap.set(card, {
+                  yPercent: -120,
+                  opacity: 0,
+                  scale: 0.9,
+                  rotateX: 8,
+                });
+              }
+            }
+
+            // ENTRY animation
+            if (i > 0) {
+              const prevPhaseStart = (i - 1) * transitionPercent;
+              const entryStart = prevPhaseStart + transitionPercent * 0.4;
+              const entryEnd = prevPhaseStart + transitionPercent;
+
+              const initialScale = 0.85 - (i - 1) * 0.02;
+              const initialYPercent = 6 + (i - 1) * 3;
+
+              if (progress >= entryStart && progress <= entryEnd) {
+                const entryProgress = (progress - entryStart) / (entryEnd - entryStart);
+                gsap.set(card, {
+                  scale: initialScale + (1 - initialScale) * entryProgress,
+                  yPercent: initialYPercent - initialYPercent * entryProgress,
+                  rotateX: -6 + 6 * entryProgress,
+                });
+              } else if (progress > entryEnd && i <= Math.floor(progress / transitionPercent)) {
+                gsap.set(card, {
+                  scale: 1,
+                  yPercent: 0,
+                  rotateX: 0,
+                });
+              }
+            }
           });
-        }
+        },
       });
     }, section);
 
     return () => ctx.revert();
-  }, []);
+  }, [isMobile, totalCards, totalTransitions, transitionPercent]);
+
+  // Se for mobile, renderizar uma estrutura mais simples
+  if (isMobile) {
+    return (
+      <section id="services" className="py-24 bg-background">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <p className="text-xs tracking-[0.3em] text-primary mb-2 font-medium uppercase">O que fazemos</p>
+            <h2 className="font-display text-3xl md:text-4xl font-light text-foreground">
+              Nossos <span className="text-primary font-medium">Serviços</span>
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 gap-6">
+            {services.map((service) => (
+              <div
+                key={service.number}
+                className="w-full rounded-3xl border border-primary/30 p-6 md:p-8 relative overflow-hidden"
+                style={{
+                  backgroundColor: "rgba(18, 18, 18, 0.85)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                }}
+              >
+                <span className="absolute top-4 left-5 text-primary/50 font-display text-sm font-bold tracking-wider">
+                  {service.number}
+                </span>
+                
+                <div className="absolute top-2 right-2 h-10 overflow-hidden flex items-center opacity-15">
+                  <img
+                    src={logoLight}
+                    alt="Rodaxe"
+                    className="h-24 w-auto object-cover object-center -my-6"
+                  />
+                </div>
+
+                <div className="flex flex-col items-center pt-4">
+                  <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                    <service.icon size={26} className="text-primary" />
+                  </div>
+                  
+                  <h3 className="font-display text-xl font-medium text-foreground text-center mb-3">
+                    {service.title}
+                  </h3>
+                  
+                  <p className="text-muted-foreground text-center text-sm leading-relaxed">
+                    {service.description}
+                  </p>
+                </div>
+
+                <div className="absolute top-3 right-3 w-6 h-6 border-t border-r border-primary/20 rounded-tr-lg" />
+                <div className="absolute bottom-3 left-3 w-6 h-6 border-b border-l border-primary/20 rounded-bl-lg" />
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -195,8 +280,6 @@ const ServicesSection = () => {
                 className="w-full h-full rounded-3xl border border-primary/30 flex flex-col items-center justify-center p-6 md:p-10 relative overflow-hidden"
                 style={{
                   backgroundColor: "rgba(18, 18, 18, 0.85)",
-                  backdropFilter: "blur(16px)",
-                  WebkitBackdropFilter: "blur(16px)",
                   boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
                 }}
               >
@@ -252,6 +335,8 @@ const ServicesSection = () => {
       </div>
     </section>
   );
-};
+});
+
+ServicesSection.displayName = "ServicesSection";
 
 export default ServicesSection;

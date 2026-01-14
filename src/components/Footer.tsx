@@ -54,12 +54,14 @@ const Footer = () => {
           >
             <a
               href="#"
+              aria-label="Visite nosso Instagram"
               className="w-10 h-10 rounded-full bg-card/50 border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all"
             >
               <Instagram size={18} />
             </a>
             <a
               href="#"
+              aria-label="Visite nosso canal no YouTube"
               className="w-10 h-10 rounded-full bg-card/50 border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all"
             >
               <Youtube size={18} />

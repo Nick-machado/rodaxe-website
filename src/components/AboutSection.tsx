@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Award, Users, Camera, Clock } from "lucide-react";
+import { memo, useMemo } from "react";
 
 const stats = [
   { icon: Camera, value: "500+", label: "Projetos" },
@@ -8,7 +9,28 @@ const stats = [
   { icon: Clock, value: "24h", label: "Suporte" },
 ];
 
-const AboutSection = () => {
+// Memoize animation variants
+const contentVariants = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
+};
+
+const contentTransition = {
+  duration: 0.8,
+};
+
+const titleTransition = {
+  duration: 0.6,
+};
+
+const statTransition = (index: number) => ({
+  duration: 0.5,
+  delay: index * 0.1,
+});
+
+const AboutSection = memo(() => {
+  const viewport = useMemo(() => ({ once: true }), []);
+
   return (
     <section id="about" className="relative py-32 bg-card/50 overflow-hidden">
       {/* Background decoration */}
@@ -20,10 +42,11 @@ const AboutSection = () => {
         <div className="max-w-4xl mx-auto text-center">
           {/* Content */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            variants={contentVariants}
+            initial="initial"
+            whileInView="animate"
+            transition={contentTransition}
+            viewport={viewport}
           >
             <p className="text-xs tracking-[0.3em] text-primary mb-4 font-medium uppercase">
               Sobre nós
@@ -47,8 +70,8 @@ const AboutSection = () => {
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
+                  transition={statTransition(index)}
+                  viewport={viewport}
                   className="text-center"
                 >
                   <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
@@ -66,6 +89,8 @@ const AboutSection = () => {
       </div>
     </section>
   );
-};
+});
+
+AboutSection.displayName = "AboutSection";
 
 export default AboutSection;

@@ -1,11 +1,65 @@
 import { motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import heroImage from "@/assets/hero-aerial.jpg";
+import { memo, useCallback, useMemo } from "react";
 
-const HeroSection = () => {
-  const scrollToNiches = () => {
+// Memoize animation variants
+const headlineVariants = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
+};
+
+const headlineTransition = {
+  duration: 0.8,
+  ease: "easeOut",
+};
+
+const ctaVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+};
+
+const ctaTransition = {
+  duration: 0.8,
+  delay: 0.3,
+  ease: "easeOut",
+};
+
+const showcaseVariants = {
+  initial: { opacity: 0, y: 40 },
+  animate: { opacity: 1, y: 0 },
+};
+
+const showcaseTransition = {
+  duration: 1,
+  delay: 0.5,
+  ease: "easeOut",
+};
+
+const overlayTextVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+};
+
+const overlayTextTransition = {
+  delay: 1,
+  duration: 0.8,
+};
+
+const buttonHoverVariants = {
+  hover: { scale: 1.02 },
+  tap: { scale: 0.98 },
+};
+
+const arrowHoverVariants = {
+  hover: { scale: 1.1, rotate: 90 },
+  tap: { scale: 0.95 },
+};
+
+const HeroSection = memo(() => {
+  const scrollToNiches = useCallback(() => {
     document.getElementById("niches")?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
 
   return (
     <section className="relative min-h-screen w-full overflow-hidden bg-background">
@@ -38,9 +92,10 @@ const HeroSection = () => {
       <div className="relative min-h-screen flex flex-col items-center justify-start pt-32 md:pt-40 px-6">
         {/* Main Headline */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          variants={headlineVariants}
+          initial="initial"
+          animate="animate"
+          transition={headlineTransition}
           className="max-w-5xl mb-8 text-center"
         >
           <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-light text-foreground leading-[1.1] tracking-tight">
@@ -54,34 +109,32 @@ const HeroSection = () => {
 
         {/* CTA Buttons */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          variants={ctaVariants}
+          initial="initial"
+          animate="animate"
+          transition={ctaTransition}
           className="flex items-center gap-4 mb-12"
         >
-          <motion.button
+          <button
             onClick={scrollToNiches}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="bg-foreground/10 backdrop-blur-sm text-foreground px-8 py-4 rounded-full text-sm font-medium tracking-widest transition-all duration-300 hover:bg-foreground/20 border border-foreground/20"
+            className="bg-foreground/10 backdrop-blur-sm text-foreground px-8 py-4 rounded-full text-sm font-medium tracking-widest transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] hover:bg-foreground/20 border border-foreground/20"
           >
             CONTACTAR
-          </motion.button>
-          <motion.button
+          </button>
+          <button
             onClick={scrollToNiches}
-            whileHover={{ scale: 1.1, rotate: 90 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-12 h-12 rounded-full bg-foreground/5 border border-foreground/20 flex items-center justify-center text-foreground/60 hover:text-foreground hover:bg-foreground/10 transition-all duration-300"
+            className="w-12 h-12 rounded-full bg-foreground/5 border border-foreground/20 flex items-center justify-center text-foreground/60 hover:text-foreground hover:bg-foreground/10 hover:scale-110 hover:rotate-90 active:scale-95 transition-all duration-300"
           >
             <ArrowDown size={18} />
-          </motion.button>
+          </button>
         </motion.div>
 
         {/* Video Showcase Card */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+          variants={showcaseVariants}
+          initial="initial"
+          animate="animate"
+          transition={showcaseTransition}
           className="w-full max-w-4xl"
         >
           <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-background/50 group cursor-pointer border border-border/30">
@@ -97,9 +150,10 @@ const HeroSection = () => {
             {/* Video title overlay */}
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1, duration: 0.8 }}
+                variants={overlayTextVariants}
+                initial="initial"
+                animate="animate"
+                transition={overlayTextTransition}
                 className="text-center"
               >
                 <p className="font-display text-3xl md:text-4xl lg:text-5xl font-light text-foreground/90 italic tracking-wide">
@@ -122,6 +176,8 @@ const HeroSection = () => {
       </div>
     </section>
   );
-};
+});
+
+HeroSection.displayName = "HeroSection";
 
 export default HeroSection;

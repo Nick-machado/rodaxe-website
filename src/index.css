@@ -58,9 +58,9 @@
     --font-display: 'Montserrat', sans-serif;
     --font-body: 'Raleway', sans-serif;
 
-    /* Transitions */
-    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Transitions - OTIMIZADO: valores mais curtos */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 8%;
@@ -89,7 +89,7 @@
     --secondary-foreground: 0 0% 95%;
 
     --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
+    --muted-foreground: 0 0% 70%;
 
     --accent: 0 0% 12%;
     --accent-foreground: 0 0% 95%;
@@ -119,14 +119,25 @@
 
   html {
     scroll-behavior: smooth;
+    /* OTIMIZAÇÃO: Melhorar rendering de texto */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     @apply bg-background text-foreground font-body antialiased;
+    /* OTIMIZAÇÃO: Prevenir layout shifts */
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
+  }
+
+  /* OTIMIZAÇÃO: Reduzir repaints em imagens */
+  img {
+    content-visibility: auto;
   }
 }
 
@@ -182,16 +193,20 @@
 }
 
 @layer utilities {
+  /* OTIMIZAÇÃO: Animações com GPU acceleration */
   .animate-fade-up {
     animation: fadeUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity;
   }
 
   .animate-fade-in {
     animation: fadeIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: opacity;
   }
 
   .animate-scale-in {
     animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity;
   }
 
   .delay-100 { animation-delay: 100ms; }
@@ -199,16 +214,34 @@
   .delay-300 { animation-delay: 300ms; }
   .delay-400 { animation-delay: 400ms; }
   .delay-500 { animation-delay: 500ms; }
+
+  /* OTIMIZAÇÃO: Classe utilitária para GPU acceleration */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* OTIMIZAÇÃO: Classe para elementos que serão animados */
+  .will-animate {
+    will-change: transform, opacity;
+  }
+
+  /* OTIMIZAÇÃO: Remover will-change após animação */
+  .animation-complete {
+    will-change: auto;
+  }
 }
 
+/* OTIMIZAÇÃO: Keyframes com transform3d para GPU */
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translate3d(0, 30px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -220,15 +253,15 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale3d(0.95, 0.95, 1);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale3d(1, 1, 1);
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - OTIMIZADO */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -244,4 +277,45 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--primary));
+}
+
+/* OTIMIZAÇÃO: Respeitar preferências de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-scale-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* OTIMIZAÇÃO: Melhorar performance em dispositivos móveis */
+@media (max-width: 768px) {
+  /* Desabilitar backdrop-filter em mobile para melhor performance */
+  .glass,
+  .glass-dark {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* Simplificar sombras em mobile */
+  .shadow-2xl {
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* OTIMIZAÇÃO: Content-visibility para seções fora da viewport */
+section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }

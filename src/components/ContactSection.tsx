@@ -1,12 +1,83 @@
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Instagram, Facebook, Youtube } from "lucide-react";
-import { useState } from "react";
+import { useState, memo, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
-const ContactSection = () => {
+// Memoize animation variants
+const containerVariants = {
+  initial: { opacity: 0, x: -50 },
+  animate: { opacity: 1, x: 0 },
+};
+
+const containerTransition = {
+  duration: 0.8,
+};
+
+const titleVariants = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
+};
+
+const titleTransition = {
+  duration: 0.6,
+};
+
+const socialHoverVariants = {
+  hover: { scale: 1.1 },
+  tap: { scale: 0.95 },
+};
+
+// Memoize ContactInfo component
+const ContactInfo = memo(({ icon: Icon, label, href, index }: {
+  icon: React.ComponentType<{ size: number; className: string }>;
+  label: string;
+  href: string;
+  index: number;
+}) => {
+  const cardVariants = useMemo(() => ({
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+  }), []);
+
+  const cardTransition = useMemo(() => ({
+    duration: 0.5,
+    delay: index * 0.1,
+  }), [index]);
+
+  const hoverVariants = useMemo(() => ({
+    hover: { scale: 1.02, x: 10 },
+  }), []);
+
+  const viewport = useMemo(() => ({ once: true }), []);
+
+  return (
+    <motion.a
+      href={href}
+      variants={cardVariants}
+      initial="initial"
+      whileInView="animate"
+      transition={cardTransition}
+      viewport={viewport}
+      whileHover="hover"
+      variants={hoverVariants}
+      className="flex items-center gap-4 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 transition-all duration-300 hover:border-primary/30 group"
+    >
+      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+        <Icon size={20} className="text-primary" />
+      </div>
+      <span className="text-foreground/80 group-hover:text-foreground transition-colors">
+        {label}
+      </span>
+    </motion.a>
+  );
+});
+
+ContactInfo.displayName = "ContactInfo";
+
+const ContactSection = memo(() => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,19 +86,24 @@ const ContactSection = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     toast.success("Mensagem enviada com sucesso! Entraremos em contato em breve.");
     setFormData({ name: "", email: "", phone: "", message: "" });
     setIsSubmitting(false);
-  };
+  }, []);
 
-  const contactInfo = [
+  const handleInputChange = useCallback((field: string) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData(prev => ({ ...prev, [field]: e.target.value }));
+  }, []);
+
+  const contactInfo = useMemo(() => [
     {
       icon: Mail,
       label: "contato@rodaxe.com.br",
@@ -43,13 +119,15 @@ const ContactSection = () => {
       label: "São Paulo, SP - Brasil",
       href: "#",
     },
-  ];
+  ], []);
 
-  const socialLinks = [
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Youtube, href: "#", label: "Youtube" },
-  ];
+  const socialLinks = useMemo(() => [
+    { icon: Instagram, href: "#", label: "Instagram", ariaLabel: "Visite nosso Instagram" },
+    { icon: Facebook, href: "#", label: "Facebook", ariaLabel: "Visite nossa página no Facebook" },
+    { icon: Youtube, href: "#", label: "Youtube", ariaLabel: "Visite nosso canal no YouTube" },
+  ], []);
+
+  const viewport = useMemo(() => ({ once: true }), []);
 
   return (
     <section id="contact" className="relative py-32 bg-background overflow-hidden">
@@ -57,26 +135,29 @@ const ContactSection = () => {
         <div className="grid lg:grid-cols-2 gap-16">
           {/* Left - Title & Contact Info */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            variants={containerVariants}
+            initial="initial"
+            whileInView="animate"
+            transition={containerTransition}
+            viewport={viewport}
           >
             <div className="mb-12">
               <motion.h2
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
+                variants={titleVariants}
+                initial="initial"
+                whileInView="animate"
+                transition={titleTransition}
+                viewport={viewport}
                 className="font-display text-6xl md:text-7xl lg:text-8xl font-light text-foreground leading-none"
               >
                 Let's
               </motion.h2>
               <motion.h2
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                viewport={{ once: true }}
+                variants={titleVariants}
+                initial="initial"
+                whileInView="animate"
+                transition={{ ...titleTransition, delay: 0.1 }}
+                viewport={viewport}
                 className="font-display text-6xl md:text-7xl lg:text-8xl font-bold text-primary italic"
               >
                 Talk!
@@ -86,33 +167,18 @@ const ContactSection = () => {
             {/* Contact Cards */}
             <div className="space-y-4 mb-12">
               {contactInfo.map((info, index) => (
-                <motion.a
-                  key={info.label}
-                  href={info.href}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  whileHover={{ scale: 1.02, x: 10 }}
-                  className="flex items-center gap-4 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 transition-all duration-300 hover:border-primary/30 group"
-                >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <info.icon size={20} className="text-primary" />
-                  </div>
-                  <span className="text-foreground/80 group-hover:text-foreground transition-colors">
-                    {info.label}
-                  </span>
-                </motion.a>
+                <ContactInfo key={info.label} {...info} index={index} />
               ))}
             </div>
           </motion.div>
 
           {/* Right - Form */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
+            variants={containerVariants}
+            initial="initial"
+            whileInView="animate"
+            transition={{ ...containerTransition, delay: 0.2 }}
+            viewport={viewport}
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -120,7 +186,7 @@ const ContactSection = () => {
                 <Input
                   placeholder="Nome..."
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={handleInputChange("name")}
                   required
                   className="bg-card/50 border-border/50 focus:border-primary h-12 rounded-lg"
                 />
@@ -132,19 +198,19 @@ const ContactSection = () => {
                   type="email"
                   placeholder="Email..."
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={handleInputChange("email")}
                   required
                   className="bg-card/50 border-border/50 focus:border-primary h-12 rounded-lg"
                 />
               </div>
 
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Telemóvel</label>
+                <label className="text-sm text-muted-foreground mb-2 block">Telefone</label>
                 <Input
                   type="tel"
-                  placeholder="Telemóvel..."
+                  placeholder="Telefone..."
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={handleInputChange("phone")}
                   className="bg-card/50 border-border/50 focus:border-primary h-12 rounded-lg"
                 />
               </div>
@@ -154,7 +220,7 @@ const ContactSection = () => {
                 <Textarea
                   placeholder="Mensagem..."
                   value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  onChange={handleInputChange("message")}
                   required
                   rows={5}
                   className="bg-card/50 border-border/50 focus:border-primary rounded-lg resize-none"
@@ -166,7 +232,7 @@ const ContactSection = () => {
                 disabled={isSubmitting}
                 className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-medium tracking-wide rounded-lg transition-all duration-300"
               >
-                {isSubmitting ? "Enviando..." : "Começa a tua jornada..."}
+                {isSubmitting ? "Enviando..." : "Comece sua jornada"}
               </Button>
             </form>
           </motion.div>
@@ -174,10 +240,11 @@ const ContactSection = () => {
 
         {/* Footer Links */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
+          variants={titleVariants}
+          initial="initial"
+          whileInView="animate"
+          transition={titleTransition}
+          viewport={viewport}
           className="mt-24 pt-12 border-t border-border/50"
         >
           <div className="grid md:grid-cols-3 gap-8 items-center">
@@ -194,14 +261,16 @@ const ContactSection = () => {
 
             {/* Social */}
             <div className="text-center">
-              <p className="text-primary text-sm font-medium mb-4 italic">Segue-nos</p>
+              <p className="text-primary text-sm font-medium mb-4 italic">Siga-nos</p>
               <div className="flex justify-center gap-3">
                 {socialLinks.map((social) => (
                   <motion.a
                     key={social.label}
                     href={social.href}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
+                    aria-label={social.ariaLabel}
+                    variants={socialHoverVariants}
+                    whileHover="hover"
+                    whileTap="tap"
                     className="w-10 h-10 rounded-full bg-card/50 border border-border/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300"
                   >
                     <social.icon size={18} />
@@ -224,6 +293,8 @@ const ContactSection = () => {
       </div>
     </section>
   );
-};
+});
+
+ContactSection.displayName = "ContactSection";
 
 export default ContactSection;
