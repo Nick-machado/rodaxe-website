@@ -138,9 +138,12 @@ const HeroSection = memo(() => {
           className="w-full max-w-4xl"
         >
           <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-background/50 group cursor-pointer border border-border/30">
-            <img 
-              src={heroImage} 
-              alt="Rodaxe Audiovisual - Captação Aérea" 
+            <img
+              src={heroImage}
+              alt="Rodaxe Audiovisual - Captação Aérea"
+              fetchPriority="high"
+              decoding="async"
+              sizes="(min-width: 1024px) 896px, 100vw"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             
