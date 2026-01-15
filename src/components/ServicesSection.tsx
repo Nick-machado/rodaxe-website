@@ -181,11 +181,11 @@ const ServicesSection = memo(() => {
                   {service.number}
                 </span>
                 
-                <div className="absolute top-2 right-2 h-10 overflow-hidden flex items-center opacity-15">
+                <div className="absolute top-2 right-2 h-5 overflow-hidden flex items-center opacity-15">
                   <img
                     src={logoLight}
                     alt="Rodaxe"
-                    className="h-24 w-auto object-cover object-center -my-6"
+                    className="h-12 w-auto object-cover object-center -my-3"
                   />
                 </div>
 
@@ -266,11 +266,11 @@ const ServicesSection = memo(() => {
                 </span>
 
                 {/* Logo watermark */}
-                <div className="absolute top-2 right-2 h-10 md:h-12 overflow-hidden flex items-center opacity-15">
+                <div className="absolute top-2 right-2 h-5 md:h-6 overflow-hidden flex items-center opacity-15">
                   <img
                     src={logoLight}
                     alt="Rodaxe"
-                    className="h-24 md:h-28 w-auto object-cover object-center -my-6"
+                    className="h-12 md:h-14 w-auto object-cover object-center -my-3"
                   />
                 </div>
 

@@ -93,11 +93,11 @@ const Navbar = memo(() => {
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center h-14 md:h-16 overflow-hidden">
+        <Link to="/" className="flex items-center h-7 md:h-8 overflow-hidden">
           <motion.img 
             src={logoLight} 
             alt="Rodaxe Audiovisual" 
-            className="h-36 md:h-44 w-auto object-cover object-center -my-10"
+            className="h-16 md:h-20 w-auto object-cover object-center -my-5"
             variants={logoHoverVariants}
             whileHover="hover"
             transition={logoTransition}
