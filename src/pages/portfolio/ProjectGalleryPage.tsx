@@ -46,12 +46,12 @@ const ProjectGalleryPage = () => {
           <title>Galeria | Rodaxe Portfolio</title>
         </Helmet>
 
-        <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-          <p className="text-muted-foreground">Galeria não encontrada.</p>
+        <div className="min-h-screen bg-[#1a1a1a] flex flex-col items-center justify-center gap-4">
+          <p className="text-white/70">Galeria não encontrada.</p>
           <Button
             onClick={() => navigate("/portfolio")}
             variant="outline"
-            className="border-border text-foreground hover:bg-muted"
+            className="border-white/30 text-white hover:bg-white/10"
           >
             Voltar ao Portfolio
           </Button>
@@ -66,15 +66,15 @@ const ProjectGalleryPage = () => {
         <title>{project.title} - Galeria | Rodaxe Portfolio</title>
       </Helmet>
 
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-[#1a1a1a]">
         {/* Header */}
-        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+        <header className="sticky top-0 z-50 bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-white/10">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between h-16">
               <Button
                 variant="ghost"
                 onClick={() => navigate(`/portfolio/${slug}`)}
-                className="text-muted-foreground hover:text-foreground hover:bg-muted"
+                className="text-white/70 hover:text-white hover:bg-white/10"
               >
                 <ArrowLeft size={20} className="mr-2" />
                 Voltar

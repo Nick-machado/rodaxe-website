@@ -252,10 +252,12 @@ const ServicesSection = memo(() => {
                 transformOrigin: "center bottom",
               }}
             >
+              {/* Card content */}
               <div
-                className="w-full h-full rounded-3xl border border-primary/30 flex flex-col items-center justify-center p-6 md:p-10 relative overflow-hidden bg-card"
+                className="w-full h-full rounded-3xl border border-primary/30 flex flex-col items-center justify-center p-6 md:p-10 relative overflow-hidden"
                 style={{
-                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
+                  backgroundColor: "rgba(18, 18, 18, 0.85)",
+                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
                 }}
               >
                 {/* Number */}
