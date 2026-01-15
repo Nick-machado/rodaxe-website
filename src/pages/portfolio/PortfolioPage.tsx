@@ -76,8 +76,8 @@ const PortfolioPage = () => {
           <div className="container mx-auto px-4">
             {/* Logo & Info */}
             <div className="text-center mb-12">
-              <Link to="/" className="inline-block mb-6 h-16 md:h-20 overflow-hidden">
-                <img src={logoLight} alt="Rodaxe" className="h-36 md:h-44 w-auto object-cover object-center -my-10" />
+              <Link to="/" className="inline-block mb-6 h-8 md:h-10 overflow-hidden">
+                <img src={logoLight} alt="Rodaxe" className="h-16 md:h-20 w-auto object-cover object-center -my-5" />
               </Link>
               
               <p className="text-muted-foreground mb-6 text-sm">

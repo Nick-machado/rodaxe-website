@@ -58,8 +58,8 @@ const ProjectCoverPage = () => {
       
 
         {/* Logo */}
-        <Link to="/portfolio" className="fixed top-8 left-8 h-14 md:h-16 overflow-hidden flex items-center z-10">
-          <img src={logoLight} alt="Rodaxe" className="h-36 md:h-44 w-auto object-cover object-center -my-10" />
+        <Link to="/portfolio" className="fixed top-8 left-8 h-7 md:h-8 overflow-hidden flex items-center z-10">
+          <img src={logoLight} alt="Rodaxe" className="h-16 md:h-20 w-auto object-cover object-center -my-5" />
         </Link>
 
         {/* Content */}
