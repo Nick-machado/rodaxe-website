@@ -24,11 +24,11 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         rodaxe: {
-          red: "hsl(var(--rodaxe-red))",
+          gold: "hsl(var(--rodaxe-gold))",
           black: "hsl(var(--rodaxe-black))",
           white: "hsl(var(--rodaxe-white))",
           gray: "hsl(var(--rodaxe-gray))",
-          light: "hsl(var(--rodaxe-light))",
+          dark: "hsl(var(--rodaxe-dark))",
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
