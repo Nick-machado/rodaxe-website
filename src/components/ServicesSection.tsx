@@ -1,7 +1,6 @@
 import { useEffect, useRef, memo, useMemo } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Camera, Film, Clapperboard, Sparkles, Video } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import logoLight from "@/assets/logo-rodaxe-light.png";
 
@@ -10,34 +9,34 @@ gsap.registerPlugin(ScrollTrigger);
 
 const services = [
   {
-    icon: Camera,
     title: "Captação Aérea",
-    description: "Imagens aéreas de alta qualidade com drones profissionais para valorizar seus empreendimentos.",
+    description: "Imagens aéreas de alta qualidade com drones profissionais para valorizar seus empreendimentos imobiliários.",
     number: "01",
+    image: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&q=80",
   },
   {
-    icon: Film,
     title: "Produção Audiovisual",
-    description: "Vídeos institucionais e promocionais que contam a história do seu negócio de forma impactante.",
+    description: "Vídeos institucionais e promocionais que contam a história do seu negócio de forma impactante e memorável.",
     number: "02",
+    image: "https://images.unsplash.com/photo-1579632652768-6cb9dcf85912?w=800&q=80",
   },
   {
-    icon: Clapperboard,
     title: "Edição Profissional",
-    description: "Pós-produção de alta qualidade com correção de cor, efeitos visuais e trilha sonora.",
+    description: "Pós-produção de alta qualidade com correção de cor cinematográfica, efeitos visuais e trilha sonora.",
     number: "03",
+    image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&q=80",
   },
   {
-    icon: Sparkles,
     title: "Motion Graphics",
-    description: "Animações e gráficos em movimento para tornar seu conteúdo ainda mais dinâmico.",
+    description: "Animações e gráficos em movimento para tornar seu conteúdo ainda mais dinâmico e profissional.",
     number: "04",
+    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
   },
   {
-    icon: Video,
     title: "Transmissão ao Vivo",
-    description: "Cobertura de eventos em tempo real com qualidade cinematográfica profissional.",
+    description: "Cobertura de eventos em tempo real com qualidade cinematográfica profissional e multi-câmeras.",
     number: "05",
+    image: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=800&q=80",
   },
 ];
 
@@ -68,8 +67,6 @@ const ServicesSection = memo(() => {
 
     // Create context for cleanup
     const ctx = gsap.context(() => {
-      // Background parallax removed per request
-
       // Set initial states
       cards.forEach((card, i) => {
         gsap.set(card, {
@@ -86,7 +83,7 @@ const ServicesSection = memo(() => {
         }
       });
 
-      // Single ScrollTrigger with onUpdate for all cards instead of multiple timelines
+      // Single ScrollTrigger with onUpdate for all cards
       ScrollTrigger.create({
         trigger: section,
         start: "top top",
@@ -155,58 +152,63 @@ const ServicesSection = memo(() => {
     return () => ctx.revert();
   }, [isMobile, totalCards, totalTransitions, transitionPercent]);
 
-  // Se for mobile, renderizar uma estrutura mais simples
+  // Mobile layout
   if (isMobile) {
     return (
       <section id="services" className="py-24 bg-background">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
+          <header className="text-center mb-12">
             <p className="text-xs tracking-[0.3em] text-primary mb-2 font-medium uppercase">O que fazemos</p>
             <h2 className="font-display text-3xl md:text-4xl font-light text-foreground">
               Nossos <span className="text-primary font-medium">Serviços</span>
             </h2>
-          </div>
+          </header>
           <div className="grid grid-cols-1 gap-6">
             {services.map((service) => (
-              <div
+              <article
                 key={service.number}
-                className="w-full rounded-3xl border border-primary/30 p-6 md:p-8 relative overflow-hidden"
+                className="w-full rounded-3xl border border-primary/30 overflow-hidden relative"
                 style={{
                   backgroundColor: "rgba(18, 18, 18, 0.85)",
                   backdropFilter: "blur(16px)",
                   WebkitBackdropFilter: "blur(16px)",
                 }}
               >
-                <span className="absolute top-4 left-5 text-primary/50 font-display text-sm font-bold tracking-wider">
-                  {service.number}
-                </span>
-                
-                <div className="absolute top-6 right-8 h-6 overflow-hidden flex items-center opacity-15">
+                {/* Service Image */}
+                <div className="aspect-video relative overflow-hidden">
                   <img
-                    src={logoLight}
-                    alt="Rodaxe"
-                    className="h-5 w-auto object-cover object-center"
+                    src={service.image}
+                    alt={`${service.title} - Serviço de ${service.title.toLowerCase()} da Rodaxe Audiovisual`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    width={400}
+                    height={225}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[rgba(18,18,18,0.95)] via-[rgba(18,18,18,0.5)] to-transparent" />
+                  <span className="absolute top-4 left-5 text-primary/70 font-display text-sm font-bold tracking-wider">
+                    {service.number}
+                  </span>
+                  <div className="absolute top-4 right-4 h-6 overflow-hidden flex items-center opacity-20">
+                    <img
+                      src={logoLight}
+                      alt=""
+                      className="h-5 w-auto object-cover object-center"
+                      aria-hidden="true"
+                    />
+                  </div>
                 </div>
 
-                <div className="flex flex-col items-center pt-4">
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
-                    <service.icon size={26} className="text-primary" />
-                  </div>
-                  
-                  <h3 className="font-display text-xl font-medium text-foreground text-center mb-3">
+                <div className="p-6">
+                  <h3 className="font-display text-xl font-medium text-foreground mb-3">
                     {service.title}
                   </h3>
-                  
-                  <p className="text-muted-foreground text-center text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     {service.description}
                   </p>
                 </div>
 
-                <div className="absolute top-3 right-3 w-6 h-6 border-t border-r border-primary/20 rounded-tr-lg" />
-                <div className="absolute bottom-3 left-3 w-6 h-6 border-b border-l border-primary/20 rounded-bl-lg" />
                 <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-              </div>
+              </article>
             ))}
           </div>
         </div>
@@ -220,19 +222,17 @@ const ServicesSection = memo(() => {
       id="services"
       style={{ height: "500vh" }}
     >
-      {/* Background parallax text removed */}
-
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
         {/* Section header */}
-        <div className="absolute top-20 md:top-24 left-0 right-0 text-center z-20">
+        <header className="absolute top-20 md:top-24 left-0 right-0 text-center z-20">
           <p className="text-xs tracking-[0.3em] text-primary mb-2 font-medium uppercase">
             O que fazemos
           </p>
           <h2 className="font-display text-3xl md:text-4xl font-light text-foreground">
             Nossos <span className="text-primary font-medium">Serviços</span>
           </h2>
-        </div>
+        </header>
 
         {/* Cards container with 3D perspective */}
         <div
@@ -244,7 +244,7 @@ const ServicesSection = memo(() => {
           }}
         >
           {services.map((service, index) => (
-            <div
+            <article
               key={service.number}
               className="service-card absolute inset-0 will-change-transform"
               style={{
@@ -254,40 +254,52 @@ const ServicesSection = memo(() => {
             >
               {/* Card content */}
               <div
-                className="w-full h-full rounded-3xl border border-primary/30 flex flex-col items-center justify-center p-6 md:p-10 relative overflow-hidden"
+                className="w-full h-full rounded-3xl border border-primary/30 flex flex-col overflow-hidden relative"
                 style={{
                   backgroundColor: "rgba(18, 18, 18, 0.85)",
                   boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
                 }}
               >
-                {/* Number */}
-                <span className="absolute top-5 left-6 text-primary/50 font-display text-base font-bold tracking-wider">
-                  {service.number}
-                </span>
-
-                {/* Logo watermark */}
-                <div className="absolute top-6 right-8 h-6 md:h-7 overflow-hidden flex items-center opacity-15">
+                {/* Service Image */}
+                <div className="absolute inset-0">
                   <img
-                    src={logoLight}
-                    alt="Rodaxe"
-                    className="h-5 md:h-6 w-auto object-cover object-center"
+                    src={service.image}
+                    alt={`${service.title} - Serviço de ${service.title.toLowerCase()} da Rodaxe Audiovisual`}
+                    className="w-full h-full object-cover"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    width={700}
+                    height={450}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[rgba(18,18,18,0.98)] via-[rgba(18,18,18,0.7)] to-[rgba(18,18,18,0.3)]" />
                 </div>
 
-                {/* Icon */}
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5">
-                  <service.icon size={28} className="text-primary" />
+                {/* Content overlay */}
+                <div className="relative z-10 flex flex-col items-center justify-end h-full p-6 md:p-10 pb-12">
+                  {/* Number */}
+                  <span className="absolute top-5 left-6 text-primary/70 font-display text-base font-bold tracking-wider">
+                    {service.number}
+                  </span>
+
+                  {/* Logo watermark */}
+                  <div className="absolute top-6 right-8 h-6 md:h-7 overflow-hidden flex items-center opacity-20">
+                    <img
+                      src={logoLight}
+                      alt=""
+                      className="h-5 md:h-6 w-auto object-cover object-center"
+                      aria-hidden="true"
+                    />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="font-display text-2xl md:text-3xl lg:text-4xl font-medium text-foreground text-center mb-3">
+                    {service.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-muted-foreground text-center text-sm md:text-base max-w-md leading-relaxed">
+                    {service.description}
+                  </p>
                 </div>
-
-                {/* Title */}
-                <h3 className="font-display text-xl md:text-2xl lg:text-3xl font-medium text-foreground text-center mb-3">
-                  {service.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-muted-foreground text-center text-sm md:text-base max-w-md leading-relaxed">
-                  {service.description}
-                </p>
 
                 {/* Decorative elements */}
                 <div className="absolute top-3 right-3 w-6 h-6 border-t border-r border-primary/20 rounded-tr-lg" />
@@ -296,7 +308,7 @@ const ServicesSection = memo(() => {
                 {/* Bottom gradient line */}
                 <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
               </div>
-            </div>
+            </article>
           ))}
         </div>
 
