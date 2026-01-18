@@ -223,9 +223,9 @@ const ServicesSection = memo(() => {
       style={{ height: "500vh" }}
     >
       {/* Sticky container */}
-      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden">
+      <div className="sticky top-0 h-screen flex flex-col items-center overflow-hidden pt-20 md:pt-24">
         {/* Section header */}
-        <header className="absolute top-20 md:top-24 left-0 right-0 text-center z-20">
+        <header className="text-center mb-8 md:mb-10 flex-shrink-0">
           <p className="text-xs tracking-[0.3em] text-primary mb-2 font-medium uppercase">
             O que fazemos
           </p>
@@ -237,7 +237,7 @@ const ServicesSection = memo(() => {
         {/* Cards container with 3D perspective */}
         <div
           ref={cardsContainerRef}
-          className="relative w-[90vw] max-w-[700px] h-[400px] md:h-[450px]"
+          className="relative w-[90vw] max-w-[700px] h-[360px] md:h-[420px] flex-shrink-0"
           style={{ 
             perspective: "1200px",
             perspectiveOrigin: "center center",
