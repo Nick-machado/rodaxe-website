@@ -29,7 +29,9 @@ export async function fetchPortfolioProjects(): Promise<PortfolioProject[]> {
     const error = await response.json();
     throw new Error(error.error || 'Erro ao buscar projetos');
   }
-  return response.json();
+  const result = await response.json();
+  // API returns { data: [...], pagination: {...} } - extract the data array
+  return result.data || result;
 }
 
 export async function fetchPortfolioProject(slug: string): Promise<PortfolioProject> {
