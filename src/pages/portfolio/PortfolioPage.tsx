@@ -1,23 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { useQuery } from "@tanstack/react-query";
 import { Search, Globe, Phone, Mail, Facebook, Instagram, Youtube } from "lucide-react";
 import { format } from "date-fns";
 import { pt } from "date-fns/locale";
-import { fetchPortfolioProjects, PortfolioProject } from "@/hooks/usePortfolioApi";
+import { usePortfolioProjects } from "@/hooks/usePortfolioApi";
+import { usePrefetchPortfolio } from "@/hooks/usePrefetchPortfolio";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import logoLight from "@/assets/logo-rodaxe-light.png";
 
 const PortfolioPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 18;
+  const { prefetchProject } = usePrefetchPortfolio();
 
-  const { data: projects = [], isLoading } = useQuery({
-    queryKey: ["portfolio-projects"],
-    queryFn: fetchPortfolioProjects,
-    staleTime: 1000 * 60 * 5, // 5 minutos de cache
-  });
+  const { data: projects = [], isLoading } = usePortfolioProjects();
 
   const filteredProjects = projects.filter((project) =>
     project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -139,13 +137,17 @@ const PortfolioPage = () => {
                     key={project.id}
                     to={`/portfolio/${project.slug}`}
                     className="group block"
+                    onMouseEnter={() => prefetchProject(project.slug)}
                   >
                     <div className="relative overflow-hidden rounded-lg mb-4">
                       <div className="aspect-[4/3] overflow-hidden">
-                        <img
+                        <OptimizedImage
                           src={project.cover_image_url}
                           alt={project.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          width={600}
+                          height={450}
+                          quality={70}
                         />
                       </div>
                       <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary/30 rounded-lg transition-colors pointer-events-none" />

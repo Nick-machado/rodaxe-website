@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+
 const API_URL = 'https://xtwzpcfglkgvwzgljiir.supabase.co/functions/v1/portfolio-api';
 
 export interface PortfolioProject {
@@ -20,6 +22,7 @@ export interface PortfolioMedia {
   sort_order: number;
 }
 
+// Fetch functions (for direct use and prefetching)
 export async function fetchPortfolioProjects(): Promise<PortfolioProject[]> {
   const response = await fetch(`${API_URL}?action=projects`);
   if (!response.ok) {
@@ -45,4 +48,36 @@ export async function fetchPortfolioMedia(projectId: string): Promise<PortfolioM
     throw new Error(error.error || 'Erro ao buscar mídias');
   }
   return response.json();
+}
+
+// React Query hooks with optimized cache settings
+const CACHE_CONFIG = {
+  staleTime: 1000 * 60 * 30, // 30 minutes
+  gcTime: 1000 * 60 * 60, // 1 hour
+};
+
+export function usePortfolioProjects() {
+  return useQuery({
+    queryKey: ['portfolio-projects'],
+    queryFn: fetchPortfolioProjects,
+    ...CACHE_CONFIG,
+  });
+}
+
+export function usePortfolioProject(slug: string) {
+  return useQuery({
+    queryKey: ['portfolio-project', slug],
+    queryFn: () => fetchPortfolioProject(slug),
+    enabled: !!slug,
+    ...CACHE_CONFIG,
+  });
+}
+
+export function usePortfolioMedia(projectId: string) {
+  return useQuery({
+    queryKey: ['portfolio-media', projectId],
+    queryFn: () => fetchPortfolioMedia(projectId),
+    enabled: !!projectId,
+    ...CACHE_CONFIG,
+  });
 }

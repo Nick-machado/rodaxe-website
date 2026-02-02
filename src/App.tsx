@@ -24,7 +24,18 @@ const PortfolioPage = React.lazy(() => import("./pages/portfolio/PortfolioPage")
 const ProjectCoverPage = React.lazy(() => import("./pages/portfolio/ProjectCoverPage"));
 const ProjectGalleryPage = React.lazy(() => import("./pages/portfolio/ProjectGalleryPage"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 30, // 30 minutes - portfolio data is mostly static
+      gcTime: 1000 * 60 * 60, // 1 hour - keep in cache longer
+      retry: 2,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    },
+  },
+});
 
 const App = () => (
   <HelmetProvider>
