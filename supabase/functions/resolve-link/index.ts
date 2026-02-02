@@ -15,6 +15,32 @@ interface Arquivo {
 // UUID format validation regex
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+// Allowed domains for redirect URLs to prevent open redirect attacks
+const ALLOWED_REDIRECT_DOMAINS = ['rodaxe.com', 'rodaxe.com.br', 'rodaxe.lovable.app'];
+
+/**
+ * Validates a redirect URL to prevent open redirect attacks
+ * Only allows redirects to whitelisted domains with HTTPS
+ */
+function validateRedirectUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    
+    // Only allow HTTPS in production
+    if (parsed.protocol !== 'https:') {
+      return false;
+    }
+    
+    // Check against allowed domains
+    const hostname = parsed.hostname.toLowerCase();
+    return ALLOWED_REDIRECT_DOMAINS.some(domain =>
+      hostname === domain || hostname.endsWith(`.${domain}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -70,8 +96,16 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Handle briefing type - return redirect URL
+    // Handle briefing type - return redirect URL with server-side validation
     if (linkData.tipo === "briefing" && linkData.url) {
+      // Validate redirect URL on server-side for defense in depth
+      if (!validateRedirectUrl(linkData.url)) {
+        return new Response(
+          JSON.stringify({ error: "URL de redirecionamento inválida ou não permitida" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
       return new Response(
         JSON.stringify({ type: "redirect", url: linkData.url }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
