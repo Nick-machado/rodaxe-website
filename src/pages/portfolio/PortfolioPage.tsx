@@ -144,6 +144,7 @@ const PortfolioPage = () => {
                         src={project.cover_image_url}
                         alt={project.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        containerClassName="h-full"
                         width={600}
                         height={450}
                         quality={70}
