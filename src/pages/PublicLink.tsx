@@ -11,6 +11,43 @@ interface Arquivo {
   tipo: string;
 }
 
+// Allowed domains for redirect URLs to prevent open redirect attacks
+const ALLOWED_REDIRECT_DOMAINS = [
+  'rodaxe.com',
+  'rodaxe.com.br',
+  'www.rodaxe.com',
+  'www.rodaxe.com.br',
+  'rodaxe.lovable.app', // Production lovable domain
+];
+
+/**
+ * Validates a redirect URL to prevent open redirect attacks
+ * Only allows redirects to whitelisted domains
+ */
+function isValidRedirectUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    
+    // Only allow http/https protocols
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      return false;
+    }
+    
+    // In production, require HTTPS
+    if (import.meta.env.PROD && parsed.protocol !== 'https:') {
+      return false;
+    }
+    
+    // Check against allowed domains
+    const hostname = parsed.hostname.toLowerCase();
+    return ALLOWED_REDIRECT_DOMAINS.some(domain => 
+      hostname === domain || hostname.endsWith(`.${domain}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
 interface Trabalho {
   id: string;
   titulo: string;
@@ -50,6 +87,12 @@ const PublicLink = () => {
 
         // Handle redirect type (briefing)
         if (data.type === "redirect" && data.url) {
+          // Validate URL before redirecting to prevent open redirect attacks
+          if (!isValidRedirectUrl(data.url)) {
+            setError("Link de redirecionamento inválido ou não confiável");
+            setLoading(false);
+            return;
+          }
           window.location.href = data.url;
           return;
         }
