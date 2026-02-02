@@ -139,17 +139,15 @@ const PortfolioPage = () => {
                     className="group block"
                     onMouseEnter={() => prefetchProject(project.slug)}
                   >
-                    <div className="relative overflow-hidden rounded-lg mb-4">
-                      <div className="aspect-[4/3] overflow-hidden">
-                        <OptimizedImage
-                          src={project.cover_image_url}
-                          alt={project.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          width={600}
-                          height={450}
-                          quality={70}
-                        />
-                      </div>
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-lg mb-4">
+                      <OptimizedImage
+                        src={project.cover_image_url}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        width={600}
+                        height={450}
+                        quality={70}
+                      />
                       <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary/30 rounded-lg transition-colors pointer-events-none" />
                     </div>
                     <div className="text-center">
