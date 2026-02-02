@@ -1,18 +1,16 @@
 import { memo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchPortfolioProjects, PortfolioProject } from "@/hooks/usePortfolioApi";
+import { usePortfolioProjects } from "@/hooks/usePortfolioApi";
+import { usePrefetchPortfolio } from "@/hooks/usePrefetchPortfolio";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import { Play, ArrowRight, MapPin } from "lucide-react";
 
 const PortfolioShowcase = memo(() => {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const { prefetchProject } = usePrefetchPortfolio();
   
-  const { data: projects, isLoading, error } = useQuery({
-    queryKey: ['portfolio-projects-showcase'],
-    queryFn: fetchPortfolioProjects,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: projects, isLoading, error } = usePortfolioProjects();
 
   // Show only first 4 projects
   const showcaseProjects = projects?.slice(0, 4) || [];
@@ -118,17 +116,20 @@ const PortfolioShowcase = memo(() => {
               <Link
                 to={`/portfolio/${project.slug}`}
                 className="group relative block aspect-video rounded-2xl overflow-hidden border border-border/30"
-                onMouseEnter={() => setHoveredId(project.id)}
+                onMouseEnter={() => {
+                  setHoveredId(project.id);
+                  prefetchProject(project.slug);
+                }}
                 onMouseLeave={() => setHoveredId(null)}
               >
                 {/* Thumbnail */}
-                <img
+                <OptimizedImage
                   src={project.cover_image_url}
                   alt={`Projeto ${project.title} - Captação aérea em ${project.location || 'Brasil'}`}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  loading="lazy"
-                  width={640}
-                  height={360}
+                  width={800}
+                  height={450}
+                  quality={75}
                 />
                 
                 {/* Overlay */}

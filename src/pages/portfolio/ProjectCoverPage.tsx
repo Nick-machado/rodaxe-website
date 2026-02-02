@@ -1,9 +1,8 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { fetchPortfolioProject } from "@/hooks/usePortfolioApi";
+import { usePortfolioProject } from "@/hooks/usePortfolioApi";
 import WavesBackground from "@/components/WavesBackground";
 import logoLight from "@/assets/logo-rodaxe-light.png";
 
@@ -11,12 +10,7 @@ const ProjectCoverPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
-  const { data: project, isLoading } = useQuery({
-    queryKey: ["portfolio-project", slug],
-    queryFn: () => fetchPortfolioProject(slug!),
-    enabled: !!slug,
-    staleTime: 1000 * 60 * 5,
-  });
+  const { data: project, isLoading } = usePortfolioProject(slug!);
 
   if (isLoading) {
     return (
@@ -114,7 +108,8 @@ const ProjectCoverPage = () => {
                   src={project.main_video_url}
                   controls
                   playsInline
-                  poster={project.cover_image_url}
+                  preload="none"
+                  poster={`${project.cover_image_url}?width=1920&quality=80&format=webp`}
                   className="w-full h-full object-cover"
                 />
               </div>

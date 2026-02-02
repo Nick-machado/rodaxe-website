@@ -1,33 +1,22 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
-  fetchPortfolioProject, 
-  fetchPortfolioMedia, 
+  usePortfolioProject, 
+  usePortfolioMedia, 
   PortfolioMedia 
 } from "@/hooks/usePortfolioApi";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 const ProjectGalleryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [selectedMedia, setSelectedMedia] = useState<PortfolioMedia | null>(null);
 
-  const { data: project, isLoading: projectLoading } = useQuery({
-    queryKey: ["portfolio-project", slug],
-    queryFn: () => fetchPortfolioProject(slug!),
-    enabled: !!slug,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const { data: media = [], isLoading: mediaLoading } = useQuery({
-    queryKey: ["portfolio-media", project?.id],
-    queryFn: () => fetchPortfolioMedia(project!.id),
-    enabled: !!project?.id,
-    staleTime: 1000 * 60 * 5,
-  });
+  const { data: project, isLoading: projectLoading } = usePortfolioProject(slug!);
+  const { data: media = [], isLoading: mediaLoading } = usePortfolioMedia(project?.id || '');
 
   const isLoading = projectLoading || mediaLoading;
 
@@ -107,10 +96,13 @@ const ProjectGalleryPage = () => {
                   onClick={() => setSelectedMedia(item)}
                   className="group relative aspect-[4/3] overflow-hidden rounded-lg"
                 >
-                  <img
+                  <OptimizedImage
                     src={item.type === "video" ? (item.thumbnail_url || item.url) : item.url}
                     alt={item.title || "Media"}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    width={600}
+                    height={450}
+                    quality={70}
                   />
                   {item.type === "video" && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/40 transition-colors">
@@ -147,6 +139,7 @@ const ProjectGalleryPage = () => {
                   src={selectedMedia.url}
                   controls
                   autoPlay
+                  preload="none"
                   className="w-full h-full object-contain rounded-lg"
                 />
               ) : (
